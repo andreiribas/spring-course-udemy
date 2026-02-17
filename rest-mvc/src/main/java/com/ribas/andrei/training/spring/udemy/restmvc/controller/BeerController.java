@@ -4,6 +4,9 @@ import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,11 @@ public class BeerController {
     //@RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Beer> createBeer(@RequestBody Beer beer) {
         Beer savedBeer = beerService.createBeer(beer);
+
+//        var httpHeaders = new HttpHeaders();
+//        httpHeaders.setLocation(URI.create("/api/v1/beers/" + savedBeer.getId()));
+//        return new ResponseEntity<>(beer, httpHeaders, HttpStatus.CREATED);
+
         return ResponseEntity.created(URI.create("/api/v1/beers/" + savedBeer.getId())).body(savedBeer);
     }
 
@@ -32,8 +40,12 @@ public class BeerController {
     }
 
     @RequestMapping(value = "/{beerId}", method = RequestMethod.GET)
-    public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<Beer> getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get beer by id: {} - in controller.", beerId);
-        return beerService.getBeerById(beerId);
+        var beer = beerService.getBeerById(beerId);
+        if(beer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(beer);
     }
 }
