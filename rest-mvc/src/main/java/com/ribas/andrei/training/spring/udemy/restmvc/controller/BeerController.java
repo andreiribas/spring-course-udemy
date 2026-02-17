@@ -34,6 +34,15 @@ public class BeerController {
         return ResponseEntity.created(URI.create("/api/v1/beers/" + savedBeer.getId())).body(savedBeer);
     }
 
+    @PutMapping("{beerId}")
+    public ResponseEntity<Beer> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+        Beer updatedBeer = beerService.updateBeerById(beerId, beer);
+        if(updatedBeer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<Beer> listBeer() {
         return beerService.listBeers();
