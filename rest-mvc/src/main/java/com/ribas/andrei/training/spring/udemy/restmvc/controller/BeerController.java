@@ -35,9 +35,18 @@ public class BeerController {
     }
 
     @PutMapping("{beerId}")
-    public ResponseEntity<Beer> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+    public ResponseEntity<?> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         Beer updatedBeer = beerService.updateBeerById(beerId, beer);
         if(updatedBeer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{beerId}")
+    public ResponseEntity<?> deleteBeerById(@PathVariable("beerId") UUID beerId) {
+        Beer deletedBeer = beerService.deleteBeerById(beerId);
+        if(deletedBeer == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();

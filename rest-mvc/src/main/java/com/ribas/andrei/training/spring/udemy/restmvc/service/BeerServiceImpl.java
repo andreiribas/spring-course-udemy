@@ -57,4 +57,9 @@ public class BeerServiceImpl implements BeerService {
         }
         return updatedBeer;
     }
+
+    @Override
+    public Beer deleteBeerById(UUID beerId) {
+        return beersMap.remove(beerId);
+    }
 }
