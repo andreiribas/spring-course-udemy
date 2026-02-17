@@ -17,7 +17,7 @@ public class Beer {
     private UUID id;
     private String name;
     private String style;
-    private int quantity;
+    private Integer quantity;
     private String upc;
     private BigDecimal price;
     private LocalDateTime createdAt;

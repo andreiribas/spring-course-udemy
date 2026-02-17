@@ -52,6 +52,15 @@ public class BeerController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("{beerId}")
+    public ResponseEntity<?> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+        Beer patchedBeer = beerService.patchBeerById(beerId, beer);
+        if(patchedBeer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<Beer> listBeer() {
         return beerService.listBeers();
