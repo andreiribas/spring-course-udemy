@@ -10,7 +10,7 @@
     <name>spring-course-udemy-rest-mvc</name>
     <description>spring-course-udemy-rest-mvc project</description>
     <properties>
-
+        <json-path.version>2.10.0</json-path.version>
     </properties>
     <modules>
     </modules>
@@ -28,6 +28,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <scope>test</scope>
+            <version>${json-path.version}</version>
         </dependency>
     </dependencies>
 </project>
