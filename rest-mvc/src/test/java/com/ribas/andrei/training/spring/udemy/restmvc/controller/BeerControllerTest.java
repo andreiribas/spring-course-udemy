@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
@@ -27,6 +29,37 @@ class BeerControllerTest {
 
     @MockitoBean
     private BeerService beerService;
+
+    @Test
+    void testListBeerWhenThereAreNoBeersShouldReturnEmptyList() throws Exception {
+        given(beerService.listBeers())
+                .willReturn(Collections.emptyList());
+        mockMvc.perform(
+                        get("/api/v1/beers")
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(0)));
+        verify(beerService, times(1)).listBeers();
+    }
+
+    @Test
+    void testListBeerWhenThereAreBeersShouldReturnList() throws Exception {
+        var beers = List.of(createDefaultBeer(UUID.randomUUID()),
+                createDefaultBeer(UUID.randomUUID()));
+        given(beerService.listBeers())
+                .willReturn(beers);
+        mockMvc.perform(
+                        get("/api/v1/beers")
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(2)));
+
+        verify(beerService, times(1)).listBeers();
+    }
 
     @Test
     void testGetBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
