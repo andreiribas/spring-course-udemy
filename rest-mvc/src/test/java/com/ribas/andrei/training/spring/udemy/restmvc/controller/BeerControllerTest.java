@@ -4,8 +4,10 @@ import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,16 +78,26 @@ class BeerControllerTest {
                 .upc("7561238480")
                 .price(new BigDecimal("3.5")).build();
 
-        given(beerService.createBeer(any(Beer.class))).willAnswer(a -> a.getArgument(0, Beer.class));
-        mockMvc.perform(
+        given(beerService.createBeer(any(Beer.class))).willAnswer(a -> {
+            var newBeer = a.getArgument(0, Beer.class);
+            newBeer.setId(UUID.randomUUID());
+            return newBeer;
+        });
+        var beerArgumentCaptor = ArgumentCaptor.forClass(Beer.class);
+        var mvcResult = mockMvc.perform(
                         post("/api/v1/beers")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(beer))
                 )
                 .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"));
-        verify(beerService, times(1)).createBeer(any(Beer.class));
+                .andReturn();
+        verify(beerService, times(1)).createBeer(beerArgumentCaptor.capture());
+
+        var capturedBeer = beerArgumentCaptor.getValue();
+        // assert Location header contains the captured id
+        String location = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION);
+        assertEquals("/api/v1/beers/" + capturedBeer.getId(), location);
     }
 
     @Test

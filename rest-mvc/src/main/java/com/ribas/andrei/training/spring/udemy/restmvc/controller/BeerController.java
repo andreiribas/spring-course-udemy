@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -27,11 +28,14 @@ public class BeerController {
     public ResponseEntity<Beer> createBeer(@RequestBody Beer beer) {
         Beer savedBeer = beerService.createBeer(beer);
 
+        String basePath = ServletUriComponentsBuilder.fromCurrentRequest().build().getPath();
+        URI location = URI.create(basePath + "/" + savedBeer.getId());
+
 //        var httpHeaders = new HttpHeaders();
-//        httpHeaders.setLocation(URI.create("/api/v1/beers/" + savedBeer.getId()));
+//        httpHeaders.setLocation(location));
 //        return new ResponseEntity<>(beer, httpHeaders, HttpStatus.CREATED);
 
-        return ResponseEntity.created(URI.create("/api/v1/beers/" + savedBeer.getId())).body(savedBeer);
+        return ResponseEntity.created(location).body(savedBeer);
     }
 
     @PutMapping("{beerId}")
