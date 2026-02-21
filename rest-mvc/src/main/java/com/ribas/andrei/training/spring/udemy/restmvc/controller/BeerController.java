@@ -18,12 +18,16 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/beers")
 public class BeerController {
+
+    public static final String BEER_PATH = "/api/v1/beers";
+
+    public static final String BEER_PATH_WITH_SLASH = BEER_PATH + "/";
+    public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
     private final BeerService beerService;
 
-    @PostMapping
+    @PostMapping(BEER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Beer> createBeer(@RequestBody Beer beer) {
         Beer savedBeer = beerService.createBeer(beer);
@@ -38,7 +42,7 @@ public class BeerController {
         return ResponseEntity.created(location).body(savedBeer);
     }
 
-    @PutMapping("{beerId}")
+    @PutMapping(BEER_PATH_ID)
     public ResponseEntity<?> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         Beer updatedBeer = beerService.updateBeerById(beerId, beer);
         if(updatedBeer == null) {
@@ -47,7 +51,7 @@ public class BeerController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{beerId}")
+    @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity<?> deleteBeerById(@PathVariable("beerId") UUID beerId) {
         Beer deletedBeer = beerService.deleteBeerById(beerId);
         if(deletedBeer == null) {
@@ -56,7 +60,7 @@ public class BeerController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{beerId}")
+    @PatchMapping(BEER_PATH_ID)
     public ResponseEntity<?> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         Beer patchedBeer = beerService.patchBeerById(beerId, beer);
         if(patchedBeer == null) {
@@ -65,12 +69,12 @@ public class BeerController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = BEER_PATH, method = RequestMethod.GET)
     public List<Beer> listBeer() {
         return beerService.listBeers();
     }
 
-    @RequestMapping(value = "/{beerId}", method = RequestMethod.GET)
+    @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
     public ResponseEntity<Beer> getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get beer by id: {} - in controller.", beerId);
         var beer = beerService.getBeerById(beerId);

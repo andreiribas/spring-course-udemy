@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.ribas.andrei.training.spring.udemy.restmvc.controller.BeerController.BEER_PATH;
+import static com.ribas.andrei.training.spring.udemy.restmvc.controller.BeerController.BEER_PATH_WITH_SLASH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,8 +44,8 @@ class BeerControllerTest {
         given(beerService.listBeers())
                 .willReturn(Collections.emptyList());
         mockMvc.perform(
-                        get("/api/v1/beers")
-                                .accept(MediaType.APPLICATION_JSON)
+                        get(BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -58,8 +60,8 @@ class BeerControllerTest {
         given(beerService.listBeers())
                 .willReturn(beers);
         mockMvc.perform(
-                        get("/api/v1/beers")
-                                .accept(MediaType.APPLICATION_JSON)
+                        get(BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -84,10 +86,10 @@ class BeerControllerTest {
         });
         var beerArgumentCaptor = ArgumentCaptor.forClass(Beer.class);
         var mvcResult = mockMvc.perform(
-                        post("/api/v1/beers")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(beer))
+                        post(BEER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer))
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -96,7 +98,7 @@ class BeerControllerTest {
         var capturedBeer = beerArgumentCaptor.getValue();
         // assert Location header contains the captured id
         String location = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION);
-        assertEquals("/api/v1/beers/" + capturedBeer.getId(), location);
+        assertEquals(BEER_PATH_WITH_SLASH + capturedBeer.getId(), location);
     }
 
     @Test
@@ -109,7 +111,7 @@ class BeerControllerTest {
                 .price(new BigDecimal("1.6")).build();
         given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willReturn(null);
         mockMvc.perform(
-                        put("/api/v1/beers/" + UUID.randomUUID())
+                        put(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(beer))
@@ -128,7 +130,7 @@ class BeerControllerTest {
                 .price(new BigDecimal("1.6")).build();
         given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
         mockMvc.perform(
-                        put("/api/v1/beers/" + UUID.randomUUID())
+                        put(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(beer))
@@ -147,7 +149,7 @@ class BeerControllerTest {
                 .price(new BigDecimal("1.6")).build();
         given(beerService.patchBeerById(any(UUID.class), any(Beer.class))).willReturn(null);
         mockMvc.perform(
-                        patch("/api/v1/beers/" + UUID.randomUUID())
+                        patch(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(beer))
@@ -171,7 +173,7 @@ class BeerControllerTest {
         var beerId = UUID.randomUUID();
         given(beerService.patchBeerById(eq(beerId), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
         mockMvc.perform(
-                        patch("/api/v1/beers/" + beerId)
+                        patch(BEER_PATH_WITH_SLASH + beerId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(beerFields))
@@ -187,7 +189,7 @@ class BeerControllerTest {
     @Test
     void testDeleteBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
         mockMvc.perform(
-                        delete("/api/v1/beers/" + UUID.randomUUID())
+                        delete(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNotFound());
@@ -200,7 +202,7 @@ class BeerControllerTest {
         given(beerService.deleteBeerById(beerId))
                 .willReturn(beer);
         mockMvc.perform(
-                        delete("/api/v1/beers/" + beerId)
+                        delete(BEER_PATH_WITH_SLASH + beerId)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNoContent());
@@ -210,7 +212,7 @@ class BeerControllerTest {
     @Test
     void testGetBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
         mockMvc.perform(
-                get("/api/v1/beers/" + UUID.randomUUID())
+                get(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                 .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNotFound());
@@ -223,7 +225,7 @@ class BeerControllerTest {
         given(beerService.getBeerById(beerId))
             .willReturn(beer);
         mockMvc.perform(
-                        get("/api/v1/beers/" + beerId)
+                        get(BEER_PATH_WITH_SLASH + beerId)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
