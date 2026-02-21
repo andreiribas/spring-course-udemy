@@ -15,10 +15,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -159,21 +158,30 @@ class BeerControllerTest {
 
     @Test
     void testPatchBeerByIdWhenItExistsShouldReturnOK() throws Exception {
-        Beer beer = Beer.builder()
-                .name("Maes")
-                .style("Pilsen")
-                .quantity(50)
-                .upc("7581004782")
-                .price(new BigDecimal("1.6")).build();
-        given(beerService.patchBeerById(any(UUID.class), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
+
+        Map<String, Object> beerFields = new HashMap<>();
+        var beerName = "Maes";
+        var beerStyle = "Pilsen";
+        beerFields.put("name", beerName);
+        beerFields.put("style", beerStyle);
+
+        var beerIdArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
+        var beerArgumentCaptor = ArgumentCaptor.forClass(Beer.class);
+
+        var beerId = UUID.randomUUID();
+        given(beerService.patchBeerById(eq(beerId), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
         mockMvc.perform(
-                        patch("/api/v1/beers/" + UUID.randomUUID())
+                        patch("/api/v1/beers/" + beerId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(beer))
+                                .content(objectMapper.writeValueAsString(beerFields))
                 )
                 .andExpect(status().isNoContent());
-        verify(beerService, times(1)).patchBeerById(any(UUID.class), any(Beer.class));
+        verify(beerService, times(1)).patchBeerById(beerIdArgumentCaptor.capture(), beerArgumentCaptor.capture());
+
+        assertThat(beerArgumentCaptor.getValue().getName()).isEqualTo(beerName);
+        assertThat(beerArgumentCaptor.getValue().getStyle()).isEqualTo(beerStyle);
+        assertThat(beerIdArgumentCaptor.getValue()).isEqualTo(beerId);
     }
 
     @Test
