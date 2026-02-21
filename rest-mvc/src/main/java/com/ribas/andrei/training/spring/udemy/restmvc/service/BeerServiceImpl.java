@@ -1,5 +1,6 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.service;
 
+import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class BeerServiceImpl implements BeerService {
+    public static final String BEER_NOT_FOUND_MESSAGE = "Beer with id %s not found";
     private final Map<UUID, Beer> beersMap;
 
     public BeerServiceImpl() {
@@ -40,14 +42,17 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer getBeerById(UUID beerId) {
-        return beersMap.get(beerId);
+        var beer = beersMap.get(beerId);
+        throwBeerNotFoundExceptionIfNull(beer, beerId);
+        return beer;
     }
 
     @Override
     public Beer updateBeerById(UUID beerId, Beer beer) {
         var updatedBeer = beersMap.get(beerId);
-        if(updatedBeer != null && //
-                beer != null) {
+        throwBeerNotFoundExceptionIfNull(updatedBeer, beerId);
+
+        if(beer != null) {
             updatedBeer.setName(beer.getName());
             updatedBeer.setStyle(beer.getStyle());
             updatedBeer.setQuantity(beer.getQuantity());
@@ -60,14 +65,16 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer deleteBeerById(UUID beerId) {
-        return beersMap.remove(beerId);
+        var deletedBeer = beersMap.remove(beerId);
+        throwBeerNotFoundExceptionIfNull(deletedBeer, beerId);
+        return deletedBeer;
     }
 
     @Override
     public Beer patchBeerById(UUID beerId, Beer beer) {
         var updatedBeer = beersMap.get(beerId);
-        if(updatedBeer != null && //
-                beer != null) {
+        throwBeerNotFoundExceptionIfNull(updatedBeer, beerId);
+        if(beer != null) {
             boolean wasUpdated = false;
             if(beer.getName() != null) {
                 updatedBeer.setName(beer.getName());
@@ -94,5 +101,11 @@ public class BeerServiceImpl implements BeerService {
             }
         }
         return updatedBeer;
+    }
+
+    private void throwBeerNotFoundExceptionIfNull(Beer updatedBeer, UUID beerId) {
+        if(updatedBeer == null) {
+            throw new NotFoundException(BEER_NOT_FOUND_MESSAGE.formatted(beerId));
+        }
     }
 }

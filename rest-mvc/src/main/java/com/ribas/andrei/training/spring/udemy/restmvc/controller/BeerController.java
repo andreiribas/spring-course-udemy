@@ -1,5 +1,6 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
+import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,16 @@ import java.util.UUID;
 public class BeerController {
 
     public static final String BEER_PATH = "/api/v1/beers";
-
     public static final String BEER_PATH_WITH_SLASH = BEER_PATH + "/";
     public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
     private final BeerService beerService;
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Beer> handleNotFoundException(NotFoundException e) {
+        log.error("Not found exception: {}", e.getMessage());
+        return ResponseEntity.notFound().build();
+    }
 
     @PostMapping(BEER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
@@ -43,29 +49,20 @@ public class BeerController {
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<?> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
-        Beer updatedBeer = beerService.updateBeerById(beerId, beer);
-        if(updatedBeer == null) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody Beer beer) {
+        beerService.updateBeerById(beerId, beer);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(BEER_PATH_ID)
-    public ResponseEntity<?> deleteBeerById(@PathVariable("beerId") UUID beerId) {
-        Beer deletedBeer = beerService.deleteBeerById(beerId);
-        if(deletedBeer == null) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> deleteBeerById(@PathVariable UUID beerId) {
+        beerService.deleteBeerById(beerId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity<?> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
-        Beer patchedBeer = beerService.patchBeerById(beerId, beer);
-        if(patchedBeer == null) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> patchBeerById(@PathVariable UUID beerId, @RequestBody Beer beer) {
+        beerService.patchBeerById(beerId, beer);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,12 +72,9 @@ public class BeerController {
     }
 
     @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
-    public ResponseEntity<Beer> getBeerById(@PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<Beer> getBeerById(@PathVariable UUID beerId) {
         log.debug("Get beer by id: {} - in controller.", beerId);
         var beer = beerService.getBeerById(beerId);
-        if(beer == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(beer);
     }
 }
