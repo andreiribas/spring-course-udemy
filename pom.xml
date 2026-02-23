@@ -14,7 +14,7 @@
     <description>spring-course-udemy-parent Parent</description>
     <properties>
         <java.version>25</java.version>
-        <spring-boot.version>4.0.2</spring-boot.version>
+        <spring-boot.version>4.0.3</spring-boot.version>
     </properties>
     <modules>
         <module>rest-mvc</module>
