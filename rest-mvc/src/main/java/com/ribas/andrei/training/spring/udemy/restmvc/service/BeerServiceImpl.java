@@ -1,6 +1,6 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.service;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,15 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class BeerServiceImpl implements BeerService {
     public static final String BEER_NOT_FOUND_MESSAGE = "Beer with id %s not found";
-    private final Map<UUID, Beer> beersMap;
+    private final Map<UUID, BeerDTO> beersMap;
 
     public BeerServiceImpl() {
         this.beersMap = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Beer createBeer(Beer beer) {
-        var newBeer = Beer.builder()
+    public BeerDTO createBeer(BeerDTO beer) {
+        var newBeer = BeerDTO.builder()
                 .id(UUID.randomUUID())
                 .name(beer.getName())
                 .style(beer.getStyle())
@@ -35,17 +35,17 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public List<Beer> listBeers() {
+    public List<BeerDTO> listBeers() {
         return beersMap.values().stream().toList();
     }
 
     @Override
-    public Optional<Beer> getBeerById(UUID beerId) {
+    public Optional<BeerDTO> getBeerById(UUID beerId) {
         return Optional.ofNullable(beersMap.get(beerId));
     }
 
     @Override
-    public Optional<Beer> updateBeerById(UUID beerId, Beer beer) {
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
         var updatedBeer = beersMap.get(beerId);
         if(updatedBeer == null) {
             return Optional.empty();
@@ -60,13 +60,13 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Optional<Beer> deleteBeerById(UUID beerId) {
+    public Optional<BeerDTO> deleteBeerById(UUID beerId) {
         var deletedBeer = beersMap.remove(beerId);
         return Optional.ofNullable(deletedBeer);
     }
 
     @Override
-    public Optional<Beer> patchBeerById(UUID beerId, Beer beer) {
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
         var updatedBeer = beersMap.get(beerId);
         if(beer == null) {
             return Optional.empty();

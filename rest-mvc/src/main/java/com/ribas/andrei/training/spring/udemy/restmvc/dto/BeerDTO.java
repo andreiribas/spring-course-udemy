@@ -1,4 +1,4 @@
-package com.ribas.andrei.training.spring.udemy.restmvc.model;
+package com.ribas.andrei.training.spring.udemy.restmvc.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Beer {
+public class BeerDTO {
     private UUID id;
     private String name;
     private String style;

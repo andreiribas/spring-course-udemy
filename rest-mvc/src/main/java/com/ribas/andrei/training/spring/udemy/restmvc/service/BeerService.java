@@ -1,21 +1,21 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.service;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface BeerService {
-    Beer createBeer(Beer beer);
+    BeerDTO createBeer(BeerDTO beer);
 
-    List<Beer> listBeers();
+    List<BeerDTO> listBeers();
 
-    Optional<Beer> getBeerById(UUID beerId);
+    Optional<BeerDTO> getBeerById(UUID beerId);
 
-    Optional<Beer> updateBeerById(UUID beerId, Beer beer);
+    Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer);
 
-    Optional<Beer> deleteBeerById(UUID beerId);
+    Optional<BeerDTO> deleteBeerById(UUID beerId);
 
-    Optional<Beer> patchBeerById(UUID beerId, Beer beer);
+    Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer);
 }
