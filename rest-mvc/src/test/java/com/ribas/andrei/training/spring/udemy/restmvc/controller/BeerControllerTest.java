@@ -3,8 +3,6 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
-import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +127,7 @@ class BeerControllerTest {
                 .quantity(50)
                 .upc("7581004782")
                 .price(new BigDecimal("1.6")).build();
-        given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
+        given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willAnswer(a -> Optional.of(a.getArgument(1, Beer.class)));
         mockMvc.perform(
                     put(BEER_PATH_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -172,7 +170,7 @@ class BeerControllerTest {
         var beerArgumentCaptor = ArgumentCaptor.forClass(Beer.class);
 
         var beerId = UUID.randomUUID();
-        given(beerService.patchBeerById(eq(beerId), any(Beer.class))).willAnswer(a -> a.getArgument(1, Beer.class));
+        given(beerService.patchBeerById(eq(beerId), any(Beer.class))).willAnswer(a -> Optional.of(a.getArgument(1, Beer.class)));
         mockMvc.perform(
                     patch(BEER_PATH_ID, beerId)
                     .contentType(MediaType.APPLICATION_JSON)
