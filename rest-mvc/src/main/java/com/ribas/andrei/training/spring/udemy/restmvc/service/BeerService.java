@@ -3,6 +3,7 @@ package com.ribas.andrei.training.spring.udemy.restmvc.service;
 import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BeerService {
@@ -10,11 +11,11 @@ public interface BeerService {
 
     List<Beer> listBeers();
 
-    Beer getBeerById(UUID beerId);
+    Optional<Beer> getBeerById(UUID beerId);
 
-    Beer updateBeerById(UUID beerId, Beer beer);
+    Optional<Beer> updateBeerById(UUID beerId, Beer beer);
 
-    Beer deleteBeerById(UUID beerId);
+    Optional<Beer> deleteBeerById(UUID beerId);
 
-    Beer patchBeerById(UUID beerId, Beer beer);
+    Optional<Beer> patchBeerById(UUID beerId, Beer beer);
 }

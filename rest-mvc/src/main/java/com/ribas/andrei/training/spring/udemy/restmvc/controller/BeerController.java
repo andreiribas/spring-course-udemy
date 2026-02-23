@@ -15,6 +15,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
+
+import static com.ribas.andrei.training.spring.udemy.restmvc.service.BeerServiceImpl.BEER_NOT_FOUND_MESSAGE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,10 +30,8 @@ public class BeerController {
 
     private final BeerService beerService;
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Beer> handleNotFoundException(NotFoundException e) {
-        log.error("Not found exception: {}", e.getMessage());
-        return ResponseEntity.notFound().build();
+    private Supplier<NotFoundException> createThrowBeerNotFoundExceptionSupplier(UUID beerId) {
+        return () -> new NotFoundException(BEER_NOT_FOUND_MESSAGE.formatted(beerId));
     }
 
     @PostMapping(BEER_PATH)
@@ -50,19 +51,19 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody Beer beer) {
-        beerService.updateBeerById(beerId, beer);
+        beerService.updateBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity<?> deleteBeerById(@PathVariable UUID beerId) {
-        beerService.deleteBeerById(beerId);
+        beerService.deleteBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(BEER_PATH_ID)
     public ResponseEntity<?> patchBeerById(@PathVariable UUID beerId, @RequestBody Beer beer) {
-        beerService.patchBeerById(beerId, beer);
+        beerService.patchBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
@@ -74,7 +75,7 @@ public class BeerController {
     @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
     public ResponseEntity<Beer> getBeerById(@PathVariable UUID beerId) {
         log.debug("Get beer by id: {} - in controller.", beerId);
-        var beer = beerService.getBeerById(beerId);
+        var beer = beerService.getBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.ok(beer);
     }
 }

@@ -7,7 +7,6 @@ import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.ribas.andrei.training.spring.udemy.restmvc.controller.BeerController.*;
-import static com.ribas.andrei.training.spring.udemy.restmvc.service.BeerServiceImpl.BEER_NOT_FOUND_MESSAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -112,7 +110,7 @@ class BeerControllerTest {
                 .quantity(50)
                 .upc("7581004782")
                 .price(new BigDecimal("1.6")).build();
-        given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willAnswer(createThrowBeerNotFoundExceptionAnswer());
+        given(beerService.updateBeerById(any(UUID.class), any(Beer.class))).willReturn(Optional.empty());
         mockMvc.perform(
                     put(BEER_PATH_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +189,7 @@ class BeerControllerTest {
 
     @Test
     void testDeleteBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
-        given(beerService.deleteBeerById(any(UUID.class))).willAnswer(createThrowBeerNotFoundExceptionAnswer());
+        given(beerService.deleteBeerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                     delete(BEER_PATH_ID, UUID.randomUUID())
                     .accept(MediaType.APPLICATION_JSON)
@@ -205,7 +203,7 @@ class BeerControllerTest {
         var beerId = UUID.randomUUID();
         var beer = createDefaultBeer(beerId);
         given(beerService.deleteBeerById(beerId))
-                .willReturn(beer);
+                .willReturn(Optional.of(beer));
         mockMvc.perform(
                     delete(BEER_PATH_ID, beerId)
                     .accept(MediaType.APPLICATION_JSON)
@@ -216,7 +214,7 @@ class BeerControllerTest {
 
     @Test
     void testGetBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
-        given(beerService.getBeerById(any(UUID.class))).willAnswer(createThrowBeerNotFoundExceptionAnswer());
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                 get(BEER_PATH_WITH_SLASH + UUID.randomUUID())
                 .accept(MediaType.APPLICATION_JSON)
@@ -230,7 +228,7 @@ class BeerControllerTest {
         var beerId = UUID.randomUUID();
         var beer = createDefaultBeer(beerId);
         given(beerService.getBeerById(beerId))
-            .willReturn(beer);
+                .willReturn(Optional.of(beer));
         mockMvc.perform(
                     get(BEER_PATH_WITH_SLASH + beerId)
                     .accept(MediaType.APPLICATION_JSON)
@@ -254,13 +252,6 @@ class BeerControllerTest {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
-    }
-
-    private Answer<Beer> createThrowBeerNotFoundExceptionAnswer() {
-        return a -> {
-            var beerId = a.getArgument(0, UUID.class);
-            throw new NotFoundException(String.format(BEER_NOT_FOUND_MESSAGE.formatted(beerId)));
-        };
     }
 
 }

@@ -1,12 +1,12 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.service;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,8 +31,7 @@ public class BeerServiceImpl implements BeerService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        this.beersMap.put(newBeer.getId(), newBeer);
-        return newBeer;
+        return this.beersMap.put(newBeer.getId(), newBeer);
     }
 
     @Override
@@ -41,71 +40,61 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Beer getBeerById(UUID beerId) {
-        var beer = beersMap.get(beerId);
-        throwBeerNotFoundExceptionIfNull(beer, beerId);
-        return beer;
+    public Optional<Beer> getBeerById(UUID beerId) {
+        return Optional.ofNullable(beersMap.get(beerId));
     }
 
     @Override
-    public Beer updateBeerById(UUID beerId, Beer beer) {
+    public Optional<Beer> updateBeerById(UUID beerId, Beer beer) {
         var updatedBeer = beersMap.get(beerId);
-        throwBeerNotFoundExceptionIfNull(updatedBeer, beerId);
+        if(updatedBeer == null) {
+            return Optional.empty();
+        }
+        updatedBeer.setName(beer.getName());
+        updatedBeer.setStyle(beer.getStyle());
+        updatedBeer.setQuantity(beer.getQuantity());
+        updatedBeer.setUpc(beer.getUpc());
+        updatedBeer.setPrice(beer.getPrice());
+        updatedBeer.setUpdatedAt(LocalDateTime.now());
+        return Optional.of(updatedBeer);
+    }
 
-        if(beer != null) {
+    @Override
+    public Optional<Beer> deleteBeerById(UUID beerId) {
+        var deletedBeer = beersMap.remove(beerId);
+        return Optional.ofNullable(deletedBeer);
+    }
+
+    @Override
+    public Optional<Beer> patchBeerById(UUID beerId, Beer beer) {
+        var updatedBeer = beersMap.get(beerId);
+        if(beer == null) {
+            return Optional.empty();
+        }
+        boolean wasUpdated = false;
+        if(beer.getName() != null) {
             updatedBeer.setName(beer.getName());
+            wasUpdated = true;
+        }
+        if(beer.getStyle() != null) {
             updatedBeer.setStyle(beer.getStyle());
+            wasUpdated = true;
+        }
+        if(beer.getQuantity() != null) {
             updatedBeer.setQuantity(beer.getQuantity());
+            wasUpdated = true;
+        }
+        if(beer.getUpc() != null) {
             updatedBeer.setUpc(beer.getUpc());
+            wasUpdated = true;
+        }
+        if(beer.getPrice() != null) {
             updatedBeer.setPrice(beer.getPrice());
+            wasUpdated = true;
+        }
+        if(wasUpdated) {
             updatedBeer.setUpdatedAt(LocalDateTime.now());
         }
-        return updatedBeer;
-    }
-
-    @Override
-    public Beer deleteBeerById(UUID beerId) {
-        var deletedBeer = beersMap.remove(beerId);
-        throwBeerNotFoundExceptionIfNull(deletedBeer, beerId);
-        return deletedBeer;
-    }
-
-    @Override
-    public Beer patchBeerById(UUID beerId, Beer beer) {
-        var updatedBeer = beersMap.get(beerId);
-        throwBeerNotFoundExceptionIfNull(updatedBeer, beerId);
-        if(beer != null) {
-            boolean wasUpdated = false;
-            if(beer.getName() != null) {
-                updatedBeer.setName(beer.getName());
-                wasUpdated = true;
-            }
-            if(beer.getStyle() != null) {
-                updatedBeer.setStyle(beer.getStyle());
-                wasUpdated = true;
-            }
-            if(beer.getQuantity() != null) {
-                updatedBeer.setQuantity(beer.getQuantity());
-                wasUpdated = true;
-            }
-            if(beer.getUpc() != null) {
-                updatedBeer.setUpc(beer.getUpc());
-                wasUpdated = true;
-            }
-            if(beer.getPrice() != null) {
-                updatedBeer.setPrice(beer.getPrice());
-                wasUpdated = true;
-            }
-            if(wasUpdated) {
-                updatedBeer.setUpdatedAt(LocalDateTime.now());
-            }
-        }
-        return updatedBeer;
-    }
-
-    private void throwBeerNotFoundExceptionIfNull(Beer updatedBeer, UUID beerId) {
-        if(updatedBeer == null) {
-            throw new NotFoundException(BEER_NOT_FOUND_MESSAGE.formatted(beerId));
-        }
+        return Optional.of(updatedBeer);
     }
 }
