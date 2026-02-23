@@ -13,9 +13,6 @@
     <name>spring-course-udemy-parent</name>
     <description>spring-course-udemy-parent Parent</description>
     <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <maven.compiler.release>25</maven.compiler.release>
         <java.version>25</java.version>
         <spring-boot.version>4.0.2</spring-boot.version>
     </properties>
@@ -23,10 +20,5 @@
         <module>rest-mvc</module>
     </modules>
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 </project>
