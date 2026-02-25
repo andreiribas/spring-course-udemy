@@ -1,7 +1,6 @@
-package com.ribas.andrei.training.spring.udemy.restmvc.repository;
+package com.ribas.andrei.training.spring.udemy.domain.repository;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Customer;
+import com.ribas.andrei.training.spring.udemy.domain.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,13 +1,14 @@
-package com.ribas.andrei.training.spring.udemy.restmvc.repository;
+package com.ribas.andrei.training.spring.udemy.domain.repository;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
+
+import com.ribas.andrei.training.spring.udemy.domain.TestConfig;
+import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DataJpaTest
+@DataJpaTestImpl
 class BeerRepositoryTest {
 
     @Autowired
