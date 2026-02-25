@@ -1,9 +1,9 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.bootstrap;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Beer;
-import com.ribas.andrei.training.spring.udemy.restmvc.model.Customer;
-import com.ribas.andrei.training.spring.udemy.restmvc.repository.BeerRepository;
-import com.ribas.andrei.training.spring.udemy.restmvc.repository.CustomerRepository;
+import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
+import com.ribas.andrei.training.spring.udemy.domain.model.Customer;
+import com.ribas.andrei.training.spring.udemy.domain.repository.BeerRepository;
+import com.ribas.andrei.training.spring.udemy.domain.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

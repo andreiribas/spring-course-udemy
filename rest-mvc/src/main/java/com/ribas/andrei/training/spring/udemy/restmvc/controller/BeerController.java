@@ -1,8 +1,8 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
+import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.BeerViewService;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
-import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class BeerController {
     public static final String BEER_PATH_WITH_SLASH = BEER_PATH + "/";
     public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
-    private final BeerService beerService;
+    private final BeerViewService beerViewService;
 
     private Supplier<NotFoundException> createThrowBeerNotFoundExceptionSupplier(UUID beerId) {
         return () -> new NotFoundException(BEER_NOT_FOUND_MESSAGE.formatted(beerId));
@@ -34,7 +34,8 @@ public class BeerController {
     @PostMapping(BEER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<BeerDTO> createBeer(@RequestBody BeerDTO beer) {
-        BeerDTO savedBeer = beerService.createBeer(beer);
+
+        BeerDTO savedBeer = beerViewService.createBeer(beer);
 
         String basePath = ServletUriComponentsBuilder.fromCurrentRequest().build().getPath();
         URI location = URI.create(basePath + "/" + savedBeer.getId());
@@ -48,31 +49,31 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody BeerDTO beer) {
-        beerService.updateBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
+        beerViewService.updateBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity<?> deleteBeerById(@PathVariable UUID beerId) {
-        beerService.deleteBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
+        beerViewService.deleteBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(BEER_PATH_ID)
     public ResponseEntity<?> patchBeerById(@PathVariable UUID beerId, @RequestBody BeerDTO beer) {
-        beerService.patchBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
+        beerViewService.patchBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = BEER_PATH, method = RequestMethod.GET)
     public List<BeerDTO> listBeer() {
-        return beerService.listBeers();
+        return beerViewService.listBeers();
     }
 
     @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
     public ResponseEntity<BeerDTO> getBeerById(@PathVariable UUID beerId) {
         log.debug("Get beer by id: {} - in controller.", beerId);
-        var beer = beerService.getBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
+        var beer = beerViewService.getBeerById(beerId).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.ok(beer);
     }
 }

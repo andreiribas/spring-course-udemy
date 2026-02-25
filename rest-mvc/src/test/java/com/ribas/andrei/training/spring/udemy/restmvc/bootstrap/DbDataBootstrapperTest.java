@@ -1,15 +1,18 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.bootstrap;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.repository.BeerRepository;
-import com.ribas.andrei.training.spring.udemy.restmvc.repository.CustomerRepository;
+import com.ribas.andrei.training.spring.udemy.domain.repository.BeerRepository;
+import com.ribas.andrei.training.spring.udemy.domain.repository.CustomerRepository;
+import com.ribas.andrei.training.spring.udemy.restmvc.test.DbTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DataJpaTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {
+        DbDataBootstrapper.class,
+        DbTestConfig.class })
 class DbDataBootstrapperTest {
 
     @Autowired
