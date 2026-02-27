@@ -1,6 +1,5 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
-import com.ribas.andrei.training.spring.udemy.restmvc.test.DbTestConfig;
 import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.BeerViewService;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
