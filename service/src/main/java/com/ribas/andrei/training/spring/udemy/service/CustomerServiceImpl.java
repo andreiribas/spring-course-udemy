@@ -27,7 +27,8 @@ public class CustomerServiceImpl implements CustomerService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        return this.customersMap.put(newCustomer.getId(), newCustomer);
+        this.customersMap.put(newCustomer.getId(), newCustomer);
+        return newCustomer;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<Customer> patchCustomerById(UUID customerId, Customer customer) {
         var updatedCustomer = customersMap.get(customerId);
-        if(customer == null) {
+        if(updatedCustomer == null) {
             return Optional.empty();
         }
         boolean wasUpdated = false;

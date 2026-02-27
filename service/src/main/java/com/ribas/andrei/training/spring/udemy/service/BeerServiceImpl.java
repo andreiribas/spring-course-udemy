@@ -69,7 +69,7 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public Optional<Beer> patchBeerById(UUID beerId, Beer beer) {
         var updatedBeer = beersMap.get(beerId);
-        if(beer == null) {
+        if(updatedBeer == null) {
             return Optional.empty();
         }
         boolean wasUpdated = false;
