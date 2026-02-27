@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.ribas.andrei.training.spring.udemy.restmvc.service.BeerServiceImpl.BEER_NOT_FOUND_MESSAGE;
+import static com.ribas.andrei.training.spring.udemy.service.BeerServiceImpl.BEER_NOT_FOUND_MESSAGE;
 
 @Slf4j
 @RequiredArgsConstructor

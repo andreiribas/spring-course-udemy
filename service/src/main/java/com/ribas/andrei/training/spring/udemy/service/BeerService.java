@@ -1,4 +1,4 @@
-package com.ribas.andrei.training.spring.udemy.restmvc.service;
+package com.ribas.andrei.training.spring.udemy.service;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
 

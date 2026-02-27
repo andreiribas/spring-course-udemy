@@ -2,7 +2,7 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller.service;
 
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.mapper.BeerMapper;
-import com.ribas.andrei.training.spring.udemy.restmvc.service.BeerService;
+import com.ribas.andrei.training.spring.udemy.service.BeerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

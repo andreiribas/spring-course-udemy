@@ -1,4 +1,4 @@
-package com.ribas.andrei.training.spring.udemy.restmvc.service;
+package com.ribas.andrei.training.spring.udemy.service;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,8 @@ public class BeerServiceImpl implements BeerService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        return this.beersMap.put(newBeer.getId(), newBeer);
+        this.beersMap.put(newBeer.getId(), newBeer);
+        return newBeer;
     }
 
     @Override

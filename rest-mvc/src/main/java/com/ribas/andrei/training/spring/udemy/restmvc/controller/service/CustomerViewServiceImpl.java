@@ -2,7 +2,7 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller.service;
 
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.mapper.CustomerMapper;
-import com.ribas.andrei.training.spring.udemy.restmvc.service.CustomerService;
+import com.ribas.andrei.training.spring.udemy.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

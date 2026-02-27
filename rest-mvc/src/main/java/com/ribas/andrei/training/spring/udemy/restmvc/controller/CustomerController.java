@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.ribas.andrei.training.spring.udemy.restmvc.service.CustomerServiceImpl.CUSTOMER_NOT_FOUND_MESSAGE;
+import static com.ribas.andrei.training.spring.udemy.service.CustomerServiceImpl.CUSTOMER_NOT_FOUND_MESSAGE;
 
 @Slf4j
 @RequiredArgsConstructor
