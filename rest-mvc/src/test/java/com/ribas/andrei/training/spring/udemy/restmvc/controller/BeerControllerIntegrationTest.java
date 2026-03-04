@@ -2,16 +2,20 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.domain.repository.BeerRepository;
 import com.ribas.andrei.training.spring.udemy.restmvc.RestMvcSpringBootApplication;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateBeerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = RestMvcSpringBootApplication.class)
 class BeerControllerIntegrationTest {
@@ -33,6 +37,49 @@ class BeerControllerIntegrationTest {
     void testListBeersWhenThereAreNoBeersShouldReturnEmptyList() {
         beerRepository.deleteAll();
         assertTrue(fixture.listBeers().isEmpty());
+    }
+
+    @Test
+    void testGetBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() {
+        var id = UUID.randomUUID();
+        var exception = assertThrows(NotFoundException.class, () -> fixture.getBeerById(id));
+        assertEquals("Beer with id %s not found".formatted(id), exception.getMessage());
+    }
+
+    @Test
+    void testGetBeerByIdExistsShouldReturnIt() {
+        var id = fixture.listBeers().getFirst().getId();
+
+        var response = fixture.getBeerById(id);
+        var customer = response.getBody();
+        assertNotNull(customer);
+        assertEquals(id, customer.getId());
+    }
+
+    @Test
+    void testCreateNewBeerShouldWork() {
+        var newBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("Jupiler")
+                .style("Pilsen")
+                .quantity(48)
+                .upc("7561238480")
+                .price(new BigDecimal("3.5"))
+                .build();
+        var createdBeerResponse = fixture.createBeer(newBeerDTO);
+        assertNotNull(createdBeerResponse.getHeaders().getLocation());
+        var createdBeer = createdBeerResponse.getBody();
+        assertNotNull(createdBeer);
+        assertNotNull(createdBeer.getId());
+        assertEquals(newBeerDTO.getName(), createdBeer.getName());
+        assertEquals(newBeerDTO.getStyle(), createdBeer.getStyle());
+        assertEquals(newBeerDTO.getQuantity(), createdBeer.getQuantity());
+        assertEquals(newBeerDTO.getUpc(), createdBeer.getUpc());
+        assertEquals(newBeerDTO.getPrice(), createdBeer.getPrice());
+        assertNotNull(createdBeer.getCreatedAt());
+        assertNotNull(createdBeer.getUpdatedAt());
+        assertEquals(createdBeer.getCreatedAt(), createdBeer.getUpdatedAt());
+
+        assertTrue(beerRepository.existsById(createdBeer.getId()));
     }
 //
 //    @Test

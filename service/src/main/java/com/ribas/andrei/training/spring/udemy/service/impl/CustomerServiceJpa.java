@@ -23,10 +23,11 @@ public class CustomerServiceJpa implements CustomerService {
 
     @Override
     public Customer createCustomer(Customer customer) {
+        var now = LocalDateTime.now();
         var newCustomer = Customer.builder()
                 .name(customer.getName())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
         return customerRepository.save(newCustomer);
     }

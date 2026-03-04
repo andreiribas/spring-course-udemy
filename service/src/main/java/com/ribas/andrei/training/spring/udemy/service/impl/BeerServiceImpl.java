@@ -26,9 +26,10 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer createBeer(Beer newBeer) {
+        var now = LocalDateTime.now();
         newBeer.setId(UUID.randomUUID());
-        newBeer.setCreatedAt(LocalDateTime.now());
-        newBeer.setUpdatedAt(LocalDateTime.now());
+        newBeer.setCreatedAt(now);
+        newBeer.setUpdatedAt(now);
         this.beersMap.put(newBeer.getId(), newBeer);
         return newBeer;
     }

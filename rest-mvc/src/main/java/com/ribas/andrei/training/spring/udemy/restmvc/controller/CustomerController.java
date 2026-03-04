@@ -1,6 +1,7 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.CustomerViewService;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class CustomerController {
 
     @PostMapping(CUSTOMER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customer) {
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CreateOrUpdateCustomerDTO customer) {
 
         CustomerDTO savedCustomer = customerViewService.createCustomer(customer);
 
@@ -48,7 +49,7 @@ public class CustomerController {
     }
 
     @PutMapping(CUSTOMER_PATH_ID)
-    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @RequestBody CustomerDTO customer) {
+    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @RequestBody CreateOrUpdateCustomerDTO customer) {
         customerViewService.updateCustomerById(customerId, customer).orElseThrow(createThrowCustomerNotFoundExceptionSupplier(customerId));
         return ResponseEntity.noContent().build();
     }
@@ -60,7 +61,7 @@ public class CustomerController {
     }
 
     @PatchMapping(CUSTOMER_PATH_ID)
-    public ResponseEntity<?> patchCustomerById(@PathVariable UUID customerId, @RequestBody CustomerDTO customer) {
+    public ResponseEntity<?> patchCustomerById(@PathVariable UUID customerId, @RequestBody CreateOrUpdateCustomerDTO customer) {
         customerViewService.patchCustomerById(customerId, customer).orElseThrow(createThrowCustomerNotFoundExceptionSupplier(customerId));
         return ResponseEntity.noContent().build();
     }

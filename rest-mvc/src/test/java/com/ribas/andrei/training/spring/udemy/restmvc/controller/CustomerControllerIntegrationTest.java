@@ -2,14 +2,18 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.domain.repository.CustomerRepository;
 import com.ribas.andrei.training.spring.udemy.restmvc.RestMvcSpringBootApplication;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = RestMvcSpringBootApplication.class)
 class CustomerControllerIntegrationTest {
@@ -32,34 +36,44 @@ class CustomerControllerIntegrationTest {
         customerRepository.deleteAll();
         assertTrue(fixture.listCustomers().isEmpty());
     }
-//
-//    @Test
-//    void testCreateNewCustomerShouldWork() throws Exception {
-//        CustomerDTO customer = CustomerDTO.builder()
-//                .name("New Test Customer")
-//                .build();
-//
-//        given(customerViewService.createCustomer(any(CustomerDTO.class))).willAnswer(a -> {
-//            var newCustomer = a.getArgument(0, CustomerDTO.class);
-//            newCustomer.setId(UUID.randomUUID());
-//            return newCustomer;
-//        });
-//        var customerArgumentCaptor = ArgumentCaptor.forClass(CustomerDTO.class);
-//        var mvcResult = mockMvc.perform(
-//                    post(BEER_PATH)
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .content(objectMapper.writeValueAsString(customer))
-//                )
-//                .andExpect(status().isCreated())
-//                .andReturn();
-//        verify(customerViewService, times(1)).createCustomer(customerArgumentCaptor.capture());
-//
-//        var capturedCustomer = customerArgumentCaptor.getValue();
-//        // assert Location header contains the captured id
-//        String location = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION);
-//        assertEquals(BEER_PATH_WITH_SLASH + capturedCustomer.getId(), location);
-//    }
+
+    @Test
+    void testGetCustomerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus(){
+        var id = UUID.randomUUID();
+        var exception = assertThrows(NotFoundException.class, () -> fixture.getCustomerById(id));
+        assertEquals("Customer with id %s not found".formatted(id), exception.getMessage());
+    }
+
+    @Test
+    void testGetCustomerByIdExistsShouldReturnIt() {
+        var id = fixture.listCustomers().getFirst().getId();
+
+        var response = fixture.getCustomerById(id);
+        var customer = response.getBody();
+        assertNotNull(customer);
+        assertEquals(id, customer.getId());
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testCreateNewCustomerShouldWork() {
+        var newCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("New Test Customer")
+                .build();
+        var createdCustomerResponse = fixture.createCustomer(newCustomerDTO);
+        assertNotNull(createdCustomerResponse.getHeaders().getLocation());
+        var createdCustomer = createdCustomerResponse.getBody();
+        assertNotNull(createdCustomer);
+        assertNotNull(createdCustomer.getId());
+        assertEquals(newCustomerDTO.getName(), createdCustomer.getName());
+        assertNotNull(createdCustomer.getCreatedAt());
+        assertNotNull(createdCustomer.getUpdatedAt());
+        assertEquals(createdCustomer.getCreatedAt(), createdCustomer.getUpdatedAt());
+
+        assertTrue(customerRepository.existsById(createdCustomer.getId()));
+    }
+
 //
 //    @Test
 //    void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
