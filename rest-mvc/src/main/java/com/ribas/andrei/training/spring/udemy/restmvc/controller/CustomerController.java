@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.ribas.andrei.training.spring.udemy.service.CustomerServiceImpl.CUSTOMER_NOT_FOUND_MESSAGE;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 public class CustomerController {
+
+    static final String CUSTOMER_NOT_FOUND_MESSAGE = "Customer with id %s not found";
 
     public static final String CUSTOMER_PATH = "/api/v1/customers";
     public static final String CUSTOMER_PATH_WITH_SLASH = CUSTOMER_PATH + "/";
@@ -66,7 +66,7 @@ public class CustomerController {
     }
 
     @RequestMapping(value = CUSTOMER_PATH, method = RequestMethod.GET)
-    public List<CustomerDTO> listCustomer() {
+    public List<CustomerDTO> listCustomers() {
         return customerViewService.listCustomers();
     }
 

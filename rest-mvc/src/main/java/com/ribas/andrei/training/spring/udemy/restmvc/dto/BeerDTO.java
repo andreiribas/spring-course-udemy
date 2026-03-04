@@ -1,25 +1,19 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
-@NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
-@Data
-public class BeerDTO {
+@NoArgsConstructor
+@RequiredArgsConstructor
+@Getter
+public class BeerDTO extends CreateOrUpdateBeerDTO {
+    @NonNull
     private UUID id;
-    private String name;
-    private String style;
-    private Integer quantity;
-    private String upc;
-    private BigDecimal price;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

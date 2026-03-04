@@ -2,12 +2,14 @@ package com.ribas.andrei.training.spring.udemy.restmvc.mapper;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
-import org.mapstruct.Mapper;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateBeerDTO;
+import org.mapstruct.*;
 
 @Mapper
-public interface BeerMapper {
+public interface BeerDTOMapper {
 
-    Beer toModel(BeerDTO dto);
+    Beer toModel(CreateOrUpdateBeerDTO dto);
 
     BeerDTO toDTO(Beer model);
+
 }

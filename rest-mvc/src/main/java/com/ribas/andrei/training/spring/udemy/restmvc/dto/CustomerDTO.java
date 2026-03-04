@@ -1,18 +1,19 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.dto;
 
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
-@NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
-@Data
-public class CustomerDTO {
+@NoArgsConstructor
+@RequiredArgsConstructor
+@Getter
+public class CustomerDTO extends CreateOrUpdateCustomerDTO {
+    @NonNull
     private UUID id;
-    private String name;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

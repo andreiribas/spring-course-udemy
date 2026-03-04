@@ -1,6 +1,7 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.BeerViewService;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateBeerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +15,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.ribas.andrei.training.spring.udemy.service.BeerServiceImpl.BEER_NOT_FOUND_MESSAGE;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 public class BeerController {
+
+    static final String BEER_NOT_FOUND_MESSAGE = "Beer with id %s not found";
 
     public static final String BEER_PATH = "/api/v1/beers";
     public static final String BEER_PATH_WITH_SLASH = BEER_PATH + "/";
@@ -33,7 +34,7 @@ public class BeerController {
 
     @PostMapping(BEER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<BeerDTO> createBeer(@RequestBody BeerDTO beer) {
+    public ResponseEntity<BeerDTO> createBeer(@RequestBody CreateOrUpdateBeerDTO beer) {
 
         BeerDTO savedBeer = beerViewService.createBeer(beer);
 
@@ -48,7 +49,7 @@ public class BeerController {
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody BeerDTO beer) {
+    public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody CreateOrUpdateBeerDTO beer) {
         beerViewService.updateBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
@@ -60,13 +61,13 @@ public class BeerController {
     }
 
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity<?> patchBeerById(@PathVariable UUID beerId, @RequestBody BeerDTO beer) {
+    public ResponseEntity<?> patchBeerById(@PathVariable UUID beerId, @RequestBody CreateOrUpdateBeerDTO beer) {
         beerViewService.patchBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = BEER_PATH, method = RequestMethod.GET)
-    public List<BeerDTO> listBeer() {
+    public List<BeerDTO> listBeers() {
         return beerViewService.listBeers();
     }
 

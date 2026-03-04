@@ -1,0 +1,50 @@
+### GET all customers request to example server
+GET http://localhost:8080/api/v1/customers HTTP/1.1
+Accept: application/json
+
+### GET customer request to server
+GET http://localhost:8080/api/v1/customers/f12a3d63-a0db-433b-8635-efebe46b3952 HTTP/1.1
+Accept: application/json
+
+### POST new customer request to server
+POST http://localhost:8080/api/v1/customers HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Test Post Customer 1"
+}
+
+### POST new customer request to server 2
+POST http://localhost:8080/api/v1/customers HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Test Post Customer 2"
+}
+
+### PUT update customer by id request to server
+PUT http://localhost:8080/api/v1/customers/f12a3d63-a0db-433b-8635-efebe46b3952 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Updated Test Customer"
+}
+
+### PATCH customer by id request to server
+PATCH http://localhost:8080/api/v1/customers/f12a3d63-a0db-433b-8635-efebe46b3952 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Patched Test Customer"
+}
+
+### PATCH customer by id with null values request to server
+PATCH http://localhost:8080/api/v1/customers/f12a3d63-a0db-433b-8635-efebe46b3952 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": null
+}
+
+### DELETE customer by id request to server
+DELETE http://localhost:8080/api/v1/customers/f12a3d63-a0db-433b-8635-efebe46b3952 HTTP/1.1

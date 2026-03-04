@@ -1,10 +1,10 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.CustomerViewService;
-import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.ribas.andrei.training.spring.udemy.restmvc.controller.CustomerController.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -38,7 +37,7 @@ class CustomerControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testListCustomerWhenThereAreNoCustomersShouldReturnEmptyList() throws Exception {
+    void testListCustomersWhenThereAreNoCustomersShouldReturnEmptyList() throws Exception {
         given(customerViewService.listCustomers())
                 .willReturn(Collections.emptyList());
         mockMvc.perform(
@@ -52,7 +51,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testListCustomerWhenThereAreCustomersShouldReturnList() throws Exception {
+    void testListCustomersWhenThereAreCustomersShouldReturnList() throws Exception {
         var customers = List.of(createDefaultCustomer(UUID.randomUUID()),
                 createDefaultCustomer(UUID.randomUUID()));
         given(customerViewService.listCustomers())
@@ -70,94 +69,87 @@ class CustomerControllerTest {
 
     @Test
     void testCreateNewCustomerShouldWork() throws Exception {
-        CustomerDTO customer = CustomerDTO.builder()
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("New Customer")
                 .build();
 
-        given(customerViewService.createCustomer(any(CustomerDTO.class))).willAnswer(a -> {
-            var newCustomer = a.getArgument(0, CustomerDTO.class);
-            newCustomer.setId(UUID.randomUUID());
-            return newCustomer;
-        });
-        var customerArgumentCaptor = ArgumentCaptor.forClass(CustomerDTO.class);
+        var id = UUID.randomUUID();
+        given(customerViewService.createCustomer(any(CreateOrUpdateCustomerDTO.class))).willReturn(new CustomerDTO(id));
         var mvcResult = mockMvc.perform(
                     post(CUSTOMER_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(customer))
+                    .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
-        verify(customerViewService, times(1)).createCustomer(customerArgumentCaptor.capture());
+        verify(customerViewService, times(1)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
 
-        var capturedCustomer = customerArgumentCaptor.getValue();
         // assert Location header contains the captured id
         String location = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION);
-        assertEquals(CUSTOMER_PATH_WITH_SLASH + capturedCustomer.getId(), location);
+        assertEquals(CUSTOMER_PATH_WITH_SLASH + id, location);
     }
 
     @Test
     void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
-        CustomerDTO customer = CustomerDTO.builder()
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer")
                 .build();
-        given(customerViewService.updateCustomerById(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.empty());
+        given(customerViewService.updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.empty());
         mockMvc.perform(
                     put(CUSTOMER_PATH_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(customer))
+                    .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
                 )
                 .andExpect(status().isNotFound());
-        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
+        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
     }
 
     @Test
     void testUpdateCustomerByIdWhenItExistsShouldReturnOK() throws Exception {
-        CustomerDTO customer = CustomerDTO.builder()
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer")
                 .build();
-        given(customerViewService.updateCustomerById(any(UUID.class), any(CustomerDTO.class))).willAnswer(a -> Optional.of(a.getArgument(1, CustomerDTO.class)));
+
+        var id = UUID.randomUUID();
+        given(customerViewService.updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.of(new CustomerDTO(id)));
         mockMvc.perform(
                     put(CUSTOMER_PATH_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(customer))
+                    .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
                 )
                 .andExpect(status().isNoContent());
-        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
+        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
     }
 
     @Test
     void testPatchCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
-        CustomerDTO customer = CustomerDTO.builder()
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer2")
                 .build();
-        given(customerViewService.patchCustomerById(any(UUID.class), any(CustomerDTO.class))).willThrow(new NotFoundException("Customer not found"));
+        given(customerViewService.patchCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willThrow(new NotFoundException("Customer not found"));
         mockMvc.perform(
                     patch(CUSTOMER_PATH_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(customer))
+                    .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
                 )
                 .andExpect(status().isNotFound());
-        verify(customerViewService, times(1)).patchCustomerById(any(UUID.class), any(CustomerDTO.class));
+        verify(customerViewService, times(1)).patchCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
     }
 
     @Test
     void testPatchCustomerByIdWhenItExistsShouldReturnOK() throws Exception {
 
-        Map<String, Object> customerFields = new HashMap<>();
-        var customerName = "Maes";
-        var customerStyle = "Pilsen";
-        customerFields.put("name", customerName);
-        customerFields.put("style", customerStyle);
-
-        var customerIdArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
-        var customerArgumentCaptor = ArgumentCaptor.forClass(CustomerDTO.class);
-
         var customerId = UUID.randomUUID();
-        given(customerViewService.patchCustomerById(eq(customerId), any(CustomerDTO.class))).willAnswer(a -> Optional.of(a.getArgument(1, CustomerDTO.class)));
+
+        Map<String, Object> customerFields = new HashMap<>();
+        var customerName = "Patched Name";
+        customerFields.put("name", customerName);
+
+        given(customerViewService.patchCustomerById(eq(customerId), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.of(new CustomerDTO(customerId)));
         mockMvc.perform(
                     patch(CUSTOMER_PATH_ID, customerId)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -165,10 +157,7 @@ class CustomerControllerTest {
                     .content(objectMapper.writeValueAsString(customerFields))
                 )
                 .andExpect(status().isNoContent());
-        verify(customerViewService, times(1)).patchCustomerById(customerIdArgumentCaptor.capture(), customerArgumentCaptor.capture());
-
-        assertThat(customerArgumentCaptor.getValue().getName()).isEqualTo(customerName);
-        assertThat(customerIdArgumentCaptor.getValue()).isEqualTo(customerId);
+        verify(customerViewService, times(1)).patchCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
     }
 
     @Test

@@ -31,17 +31,18 @@ public class DbDataBootstrapper implements CommandLineRunner {
         if(beerRepository.count() > 0) {
             return;
         }
+        var now = LocalDateTime.now();
         var beers = List.of(
             Beer.builder().name("Galaxy Cat").style("PALE_ALE").upc("12356")
-                .price(new BigDecimal("12.99")).quantity(122).createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now()).build(),
+                .price(new BigDecimal("12.99")).quantity(122).createdAt(now)
+                    .updatedAt(now).build(),
             Beer.builder().name("Crank").style("PALE_ALE").upc("12356222")
-                .price(new BigDecimal("11.99")).quantity(392).createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now()).build(),
+                .price(new BigDecimal("11.99")).quantity(392).createdAt(now)
+                    .updatedAt(now).build(),
             Beer.builder().name("Sunshine City").style("IPA").upc("12356")
                 .price(new BigDecimal("13.99")).quantity(144)
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now()).build()
+                    .createdAt(now)
+                    .updatedAt(now).build()
         );
         beerRepository.saveAll(beers);
     }
@@ -50,11 +51,12 @@ public class DbDataBootstrapper implements CommandLineRunner {
         if(customerRepository.count() > 0) {
             return;
         }
+        var now = LocalDateTime.now();
         var customers = List.of(
-            Customer.builder().name("James Smith").createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now()).build(),
-            Customer.builder().name("John Doe").createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now()).build()
+            Customer.builder().name("James Smith").createdAt(now)
+                    .updatedAt(now).build(),
+            Customer.builder().name("John Doe").createdAt(now)
+                    .updatedAt(now).build()
         );
         customerRepository.saveAll(customers);
     }

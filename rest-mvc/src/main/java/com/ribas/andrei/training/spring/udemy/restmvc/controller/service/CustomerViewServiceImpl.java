@@ -1,7 +1,8 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.controller.service;
 
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
-import com.ribas.andrei.training.spring.udemy.restmvc.mapper.CustomerMapper;
+import com.ribas.andrei.training.spring.udemy.restmvc.mapper.CustomerDTOMapper;
 import com.ribas.andrei.training.spring.udemy.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,35 +16,35 @@ import java.util.UUID;
 public class CustomerViewServiceImpl implements CustomerViewService {
 
     private final CustomerService customerService;
-    private final CustomerMapper customerMapper;
+    private final CustomerDTOMapper customerDTOMapper;
 
     @Override
-    public CustomerDTO createCustomer(CustomerDTO customer) {
-        return customerMapper.toDTO(customerService.createCustomer(customerMapper.toModel(customer)));
+    public CustomerDTO createCustomer(CreateOrUpdateCustomerDTO customer) {
+        return customerDTOMapper.toDTO(customerService.createCustomer(customerDTOMapper.toModel(customer)));
     }
 
     @Override
     public List<CustomerDTO> listCustomers() {
-        return customerService.listCustomers().stream().map(customerMapper::toDTO).toList();
+        return customerService.listCustomers().stream().map(customerDTOMapper::toDTO).toList();
     }
 
     @Override
     public Optional<CustomerDTO> getCustomerById(UUID customerId) {
-        return customerService.getCustomerById(customerId).map(customerMapper::toDTO);
+        return customerService.getCustomerById(customerId).map(customerDTOMapper::toDTO);
     }
 
     @Override
-    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customer) {
-        return customerService.updateCustomerById(customerId, customerMapper.toModel(customer)).map(customerMapper::toDTO);
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CreateOrUpdateCustomerDTO customer) {
+        return customerService.updateCustomerById(customerId, customerDTOMapper.toModel(customer)).map(customerDTOMapper::toDTO);
     }
 
     @Override
     public Optional<CustomerDTO> deleteCustomerById(UUID customerId) {
-        return customerService.deleteCustomerById(customerId).map(customerMapper::toDTO);
+        return customerService.deleteCustomerById(customerId).map(customerDTOMapper::toDTO);
     }
 
     @Override
-    public Optional<CustomerDTO> patchCustomerById(UUID customerId, CustomerDTO customer) {
-        return customerService.patchCustomerById(customerId, customerMapper.toModel(customer)).map(customerMapper::toDTO);
+    public Optional<CustomerDTO> patchCustomerById(UUID customerId, CreateOrUpdateCustomerDTO customer) {
+        return customerService.patchCustomerById(customerId, customerDTOMapper.toModel(customer)).map(customerDTOMapper::toDTO);
     }
 }

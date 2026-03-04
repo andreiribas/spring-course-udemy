@@ -3,7 +3,7 @@ GET http://localhost:8080/api/v1/beers HTTP/1.1
 Accept: application/json
 
 ### GET beer request to server
-GET http://localhost:8080/api/v1/beers/a961c284-9d14-4117-9c4c-fc881531e25c HTTP/1.1
+GET http://localhost:8080/api/v1/beers/1ea52964-eb82-4500-b026-afed6b2393fb HTTP/1.1
 Accept: application/json
 
 ### POST new beer request to server
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ### PUT update beer by id request to server
-PUT http://localhost:8080/api/v1/beers/a961c284-9d14-4117-9c4c-fc881531e25c HTTP/1.1
+PUT http://localhost:8080/api/v1/beers/1ea52964-eb82-4500-b026-afed6b2393fb HTTP/1.1
 Content-Type: application/json
 
 {
@@ -42,11 +42,8 @@ Content-Type: application/json
   "price": 0.99
 }
 
-### DELETE beer by id request to server
-DELETE http://localhost:8080/api/v1/beers/9d5b87de-d8ed-42c1-a978-b841675f4247 HTTP/1.1
-
 ### PATCH beer by id request to server
-PATCH http://localhost:8080/api/v1/beers/b36b5382-f179-4444-848a-59e0809db603 HTTP/1.1
+PATCH http://localhost:8080/api/v1/beers/1ea52964-eb82-4500-b026-afed6b2393fb HTTP/1.1
 Content-Type: application/json
 
 {
@@ -58,7 +55,7 @@ Content-Type: application/json
 }
 
 ### PATCH beer by id with null values request to server
-PATCH http://localhost:8080/api/v1/beers/b36b5382-f179-4444-848a-59e0809db603 HTTP/1.1
+PATCH http://localhost:8080/api/v1/beers/1ea52964-eb82-4500-b026-afed6b2393fb HTTP/1.1
 Content-Type: application/json
 
 {
@@ -68,3 +65,6 @@ Content-Type: application/json
   "quantity": null,
   "price": null
 }
+
+### DELETE beer by id request to server
+DELETE http://localhost:8080/api/v1/beers/1ea52964-eb82-4500-b026-afed6b2393fb HTTP/1.1
