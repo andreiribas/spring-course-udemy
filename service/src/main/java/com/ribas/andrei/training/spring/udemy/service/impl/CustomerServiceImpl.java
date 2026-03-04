@@ -1,6 +1,7 @@
-package com.ribas.andrei.training.spring.udemy.service;
+package com.ribas.andrei.training.spring.udemy.service.impl;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Customer;
+import com.ribas.andrei.training.spring.udemy.service.CustomerService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    public static final String CUSTOMER_NOT_FOUND_MESSAGE = "Customer with id %s not found";
     private final Map<UUID, Customer> customersMap;
 
     public CustomerServiceImpl() {

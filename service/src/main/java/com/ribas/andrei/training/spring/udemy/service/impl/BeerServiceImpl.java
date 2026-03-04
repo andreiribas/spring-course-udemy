@@ -1,6 +1,8 @@
-package com.ribas.andrei.training.spring.udemy.service;
+package com.ribas.andrei.training.spring.udemy.service.impl;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
+import com.ribas.andrei.training.spring.udemy.service.BeerService;
+import com.ribas.andrei.training.spring.udemy.service.mapper.BeerMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,25 +14,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class BeerServiceImpl implements BeerService {
-    public static final String BEER_NOT_FOUND_MESSAGE = "Beer with id %s not found";
     private final Map<UUID, Beer> beersMap;
 
-    public BeerServiceImpl() {
+    private final BeerMapper beerMapper;
+
+    public BeerServiceImpl(
+            BeerMapper beerMapper) {
+        this.beerMapper = beerMapper;
         this.beersMap = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Beer createBeer(Beer beer) {
-        var newBeer = Beer.builder()
-                .id(UUID.randomUUID())
-                .name(beer.getName())
-                .style(beer.getStyle())
-                .quantity(beer.getQuantity())
-                .upc(beer.getUpc())
-                .price(beer.getPrice())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+    public Beer createBeer(Beer newBeer) {
+        newBeer.setId(UUID.randomUUID());
+        newBeer.setCreatedAt(LocalDateTime.now());
+        newBeer.setUpdatedAt(LocalDateTime.now());
         this.beersMap.put(newBeer.getId(), newBeer);
         return newBeer;
     }
@@ -42,22 +40,15 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Optional<Beer> getBeerById(UUID beerId) {
-        return Optional.ofNullable(beersMap.get(beerId));
+        return getBeerByIdInternal(beerId);
     }
 
     @Override
     public Optional<Beer> updateBeerById(UUID beerId, Beer beer) {
-        var updatedBeer = beersMap.get(beerId);
-        if(updatedBeer == null) {
-            return Optional.empty();
-        }
-        updatedBeer.setName(beer.getName());
-        updatedBeer.setStyle(beer.getStyle());
-        updatedBeer.setQuantity(beer.getQuantity());
-        updatedBeer.setUpc(beer.getUpc());
-        updatedBeer.setPrice(beer.getPrice());
-        updatedBeer.setUpdatedAt(LocalDateTime.now());
-        return Optional.of(updatedBeer);
+        return getBeerByIdInternal(beerId).map(updatedBeer -> {
+            beerMapper.updateBeer(beer, updatedBeer);
+            return updatedBeer;
+        });
     }
 
     @Override
@@ -97,5 +88,9 @@ public class BeerServiceImpl implements BeerService {
             updatedBeer.setUpdatedAt(LocalDateTime.now());
         }
         return Optional.of(updatedBeer);
+    }
+
+    private Optional<Beer> getBeerByIdInternal(UUID id) {
+        return Optional.ofNullable(beersMap.get(id));
     }
 }

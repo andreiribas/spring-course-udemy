@@ -19,6 +19,13 @@
             <artifactId>domain</artifactId>
             <version>${parent.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
         <!-- Minimal Spring Boot baseline (includes Spring Context -> @Service) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
