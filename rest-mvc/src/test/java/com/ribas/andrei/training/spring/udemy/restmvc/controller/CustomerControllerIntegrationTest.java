@@ -63,15 +63,16 @@ class CustomerControllerIntegrationTest {
                 .build();
         var createdCustomerResponse = fixture.createCustomer(newCustomerDTO);
         assertNotNull(createdCustomerResponse.getHeaders().getLocation());
+        var idFromLocation = UUID.fromString(createdCustomerResponse.getHeaders().getLocation().getPath().split("/")[1]);
         var createdCustomer = createdCustomerResponse.getBody();
         assertNotNull(createdCustomer);
-        assertNotNull(createdCustomer.getId());
+        assertEquals(idFromLocation, createdCustomer.getId());
         assertEquals(newCustomerDTO.getName(), createdCustomer.getName());
         assertNotNull(createdCustomer.getCreatedAt());
         assertNotNull(createdCustomer.getUpdatedAt());
         assertEquals(createdCustomer.getCreatedAt(), createdCustomer.getUpdatedAt());
 
-        assertTrue(customerRepository.existsById(createdCustomer.getId()));
+        assertTrue(customerRepository.existsById(idFromLocation));
     }
 
 //

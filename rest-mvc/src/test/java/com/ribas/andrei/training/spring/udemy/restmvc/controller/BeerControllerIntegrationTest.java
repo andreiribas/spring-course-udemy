@@ -67,9 +67,10 @@ class BeerControllerIntegrationTest {
                 .build();
         var createdBeerResponse = fixture.createBeer(newBeerDTO);
         assertNotNull(createdBeerResponse.getHeaders().getLocation());
+        var idFromLocation = UUID.fromString(createdBeerResponse.getHeaders().getLocation().getPath().split("/")[1]);
         var createdBeer = createdBeerResponse.getBody();
         assertNotNull(createdBeer);
-        assertNotNull(createdBeer.getId());
+        assertEquals(idFromLocation, createdBeer.getId());
         assertEquals(newBeerDTO.getName(), createdBeer.getName());
         assertEquals(newBeerDTO.getStyle(), createdBeer.getStyle());
         assertEquals(newBeerDTO.getQuantity(), createdBeer.getQuantity());
@@ -79,7 +80,7 @@ class BeerControllerIntegrationTest {
         assertNotNull(createdBeer.getUpdatedAt());
         assertEquals(createdBeer.getCreatedAt(), createdBeer.getUpdatedAt());
 
-        assertTrue(beerRepository.existsById(createdBeer.getId()));
+        assertTrue(beerRepository.existsById(idFromLocation));
     }
 //
 //    @Test
