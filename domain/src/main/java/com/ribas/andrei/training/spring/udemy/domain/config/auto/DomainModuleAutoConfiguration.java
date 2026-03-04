@@ -1,4 +1,4 @@
-package com.ribas.andrei.training.spring.udemy.domain.autoconfigure;
+package com.ribas.andrei.training.spring.udemy.domain.config.auto;
 
 import com.ribas.andrei.training.spring.udemy.domain.model.Beer;
 import com.ribas.andrei.training.spring.udemy.domain.repository.BeerRepository;
@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @AutoConfiguration
 @EnableJpaRepositories(basePackageClasses = BeerRepository.class)
 @EntityScan(basePackageClasses = Beer.class)
-public class JpaAutoConfiguration {
+public class DomainModuleAutoConfiguration {
 }

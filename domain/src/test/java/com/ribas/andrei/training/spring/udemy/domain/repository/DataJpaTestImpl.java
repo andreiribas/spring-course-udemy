@@ -1,12 +1,11 @@
 package com.ribas.andrei.training.spring.udemy.domain.repository;
 
-
-import com.ribas.andrei.training.spring.udemy.domain.TestConfig;
+import com.ribas.andrei.training.spring.udemy.domain.config.TestConfig;
 import com.ribas.andrei.training.spring.udemy.domain.model.Customer;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.TYPE)
 @Documented
 @Retention(RUNTIME)
-@Import(TestConfig.class)
+@ContextConfiguration(classes = {TestConfig.class})
 @DataJpaTest
 @EnableJpaRepositories(basePackageClasses = CustomerRepository.class)
 @EntityScan(basePackageClasses = Customer.class)
