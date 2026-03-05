@@ -3,6 +3,7 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 import com.ribas.andrei.training.spring.udemy.domain.repository.CustomerRepository;
 import com.ribas.andrei.training.spring.udemy.restmvc.RestMvcSpringBootApplication;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,44 +77,34 @@ class CustomerControllerIntegrationTest {
         assertTrue(customerRepository.existsById(idFromLocation));
     }
 
-//
-//    @Test
-//    void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
-//        CustomerDTO customer = CustomerDTO.builder()
-//                .name("Maes")
-//                .style("Pilsen")
-//                .quantity(50)
-//                .upc("7581004782")
-//                .price(new BigDecimal("1.6")).build();
-//        given(customerViewService.updateCustomerById(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.empty());
-//        mockMvc.perform(
-//                    put(BEER_PATH_ID, UUID.randomUUID())
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .content(objectMapper.writeValueAsString(customer))
-//                )
-//                .andExpect(status().isNotFound());
-//        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
-//    }
-//
-//    @Test
-//    void testUpdateCustomerByIdWhenItExistsShouldReturnOK() throws Exception {
-//        CustomerDTO customer = CustomerDTO.builder()
-//                .name("Maes")
-//                .style("Pilsen")
-//                .quantity(50)
-//                .upc("7581004782")
-//                .price(new BigDecimal("1.6")).build();
-//        given(customerViewService.updateCustomerById(any(UUID.class), any(CustomerDTO.class))).willAnswer(a -> Optional.of(a.getArgument(1, CustomerDTO.class)));
-//        mockMvc.perform(
-//                    put(BEER_PATH_ID, UUID.randomUUID())
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .content(objectMapper.writeValueAsString(customer))
-//                )
-//                .andExpect(status().isNoContent());
-//        verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
-//    }
+    @Test
+    void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFound() {
+        var updatedCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("Updated Customer")
+                .build();
+        var id = UUID.randomUUID();
+        var exception = assertThrows(NotFoundException.class, () -> fixture.updateCustomerById(id, updatedCustomerDTO));
+        assertEquals("Customer with id %s not found".formatted(id), exception.getMessage());
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testUpdateCustomerByIdWhenItExistsShouldReturnOK() {
+        var updatedCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("Updated Customer")
+                .build();
+        var id = fixture.listCustomers().getFirst().getId();
+        var response = fixture.updateCustomerById(id, updatedCustomerDTO);
+        assertEquals(204, response.getStatusCode().value());
+
+        var updatedCustomer = customerRepository.findById(id).orElseThrow();
+        assertNotNull(updatedCustomer);
+        assertEquals(updatedCustomerDTO.getName(), updatedCustomer.getName());
+        assertNotNull(updatedCustomer.getCreatedAt());
+        assertNotNull(updatedCustomer.getUpdatedAt());
+        assertTrue(updatedCustomer.getCreatedAt().isBefore(updatedCustomer.getUpdatedAt()));
+    }
 //
 //    @Test
 //    void testPatchCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
@@ -195,31 +187,6 @@ class CustomerControllerIntegrationTest {
 //            )
 //            .andExpect(status().isNotFound());
 //        verify(customerViewService, times(1)).getCustomerById(any(UUID.class));
-//    }
-//
-//    @Test
-//    void testGetCustomerByIdExistsShouldReturnIt() throws Exception {
-//        var customerId = UUID.randomUUID();
-//        var customer = createDefaultCustomer(customerId);
-//        given(customerViewService.getCustomerById(customerId))
-//                .willReturn(Optional.of(customer));
-//        mockMvc.perform(
-//                    get(BEER_PATH_WITH_SLASH + customerId)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(jsonPath("$.id", is(customerId.toString())))
-//            .andExpect(jsonPath("$.name", is(customer.getName())));
-//        verify(customerViewService, times(1)).getCustomerById(customerId);
-//    }
-//
-//    private CustomerDTO createDefaultCustomer(UUID customerId) {
-//        var now = LocalDateTime.now();
-//        return CustomerDTO.builder()
-//                .id(customerId)
-//                .name("Test")
-//                .build();
 //    }
 
 }
