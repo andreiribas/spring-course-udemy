@@ -2,12 +2,14 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 
 import com.ribas.andrei.training.spring.udemy.domain.repository.CustomerRepository;
 import com.ribas.andrei.training.spring.udemy.restmvc.RestMvcSpringBootApplication;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.UUID;
@@ -25,7 +27,9 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void testListCustomersWhenThereAreCustomersShouldReturnListWithValues() {
-        assertEquals(2, fixture.listCustomers().size());
+        var response = fixture.listCustomers();
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        assertEquals(2, response.getBody().size());
     }
 
     @Rollback
@@ -33,7 +37,9 @@ class CustomerControllerIntegrationTest {
     @Test
     void testListCustomersWhenThereAreNoCustomersShouldReturnEmptyList() {
         customerRepository.deleteAll();
-        assertTrue(fixture.listCustomers().isEmpty());
+        var response = fixture.listCustomers();
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        assertEquals(0, response.getBody().size());
     }
 
     @Test
@@ -45,7 +51,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void testGetCustomerByIdExistsShouldReturnIt() {
-        var id = fixture.listCustomers().getFirst().getId();
+        var id = getFirstCustomerFromList().getId();
 
         var response = fixture.getCustomerById(id);
         var customer = response.getBody();
@@ -91,7 +97,7 @@ class CustomerControllerIntegrationTest {
         var updatedCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Updated Customer")
                 .build();
-        var id = fixture.listCustomers().getFirst().getId();
+        var id = getFirstCustomerFromList().getId();
         var response = fixture.updateCustomerById(id, updatedCustomerDTO);
         assertEquals(204, response.getStatusCode().value());
 
@@ -120,7 +126,7 @@ class CustomerControllerIntegrationTest {
         var updatedCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Patched Customer")
                 .build();
-        var id = fixture.listCustomers().getFirst().getId();
+        var id = getFirstCustomerFromList().getId();
         var response = fixture.patchCustomerById(id, updatedCustomerDTO);
         assertEquals(204, response.getStatusCode().value());
 
@@ -139,7 +145,7 @@ class CustomerControllerIntegrationTest {
         var updatedCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name(null)
                 .build();
-        var id = fixture.listCustomers().getFirst().getId();
+        var id = getFirstCustomerFromList().getId();
         var response = fixture.patchCustomerById(id, updatedCustomerDTO);
         assertEquals(204, response.getStatusCode().value());
 
@@ -151,29 +157,25 @@ class CustomerControllerIntegrationTest {
         assertTrue(updatedCustomer.getCreatedAt().isBefore(updatedCustomer.getUpdatedAt()));
     }
 
-//    @Test
-//    void testDeleteCustomerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
-//        given(customerViewService.deleteCustomerById(any(UUID.class))).willReturn(Optional.empty());
-//        mockMvc.perform(
-//                    delete(BEER_PATH_ID, UUID.randomUUID())
-//                    .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isNotFound());
-//        verify(customerViewService, times(1)).deleteCustomerById(any(UUID.class));
-//    }
-//
-//    @Test
-//    void testDeleteCustomerByIdExistsShouldDoNothing() throws Exception {
-//        var customerId = UUID.randomUUID();
-//        var customer = createDefaultCustomer(customerId);
-//        given(customerViewService.deleteCustomerById(customerId))
-//                .willReturn(Optional.of(customer));
-//        mockMvc.perform(
-//                    delete(BEER_PATH_ID, customerId)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isNoContent());
-//        verify(customerViewService, times(1)).deleteCustomerById(customerId);
-//    }
+    @Test
+    void testDeleteCustomerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
+        var id = UUID.randomUUID();
+        var exception = assertThrows(NotFoundException.class, () -> fixture.deleteCustomerById(id));
+        assertEquals("Customer with id %s not found".formatted(id), exception.getMessage());
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testDeleteCustomerByIdExistsShouldDoNothing() throws Exception {
+        var customerId = getFirstCustomerFromList().getId();
+        fixture.deleteCustomerById(customerId);
+        var exception = assertThrows(NotFoundException.class, () -> fixture.getCustomerById(customerId));
+        assertEquals("Customer with id %s not found".formatted(customerId), exception.getMessage());
+    }
+
+    private CustomerDTO getFirstCustomerFromList() {
+        return fixture.listCustomers().getBody().getFirst();
+    }
 
 }

@@ -67,8 +67,8 @@ public class CustomerController {
     }
 
     @RequestMapping(value = CUSTOMER_PATH, method = RequestMethod.GET)
-    public List<CustomerDTO> listCustomers() {
-        return customerViewService.listCustomers();
+    public ResponseEntity<List<CustomerDTO>> listCustomers() {
+        return ResponseEntity.ok(customerViewService.listCustomers());
     }
 
     @RequestMapping(value = CUSTOMER_PATH_ID, method = RequestMethod.GET)

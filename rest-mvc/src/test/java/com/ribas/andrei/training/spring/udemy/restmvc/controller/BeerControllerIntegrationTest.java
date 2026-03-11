@@ -16,7 +16,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.BDDMockito.given;
 
 @SpringBootTest(classes = RestMvcSpringBootApplication.class)
 class BeerControllerIntegrationTest {
@@ -39,7 +38,6 @@ class BeerControllerIntegrationTest {
     @Test
     void testListBeersWhenThereAreNoBeersShouldReturnEmptyListAndOKStatus() {
         beerRepository.deleteAll();
-
         var response = fixture.listBeers();
         assertEquals(200, response.getStatusCode().value());
         assertTrue(response.getBody().isEmpty());
