@@ -67,8 +67,8 @@ public class BeerController {
     }
 
     @RequestMapping(value = BEER_PATH, method = RequestMethod.GET)
-    public List<BeerDTO> listBeers() {
-        return beerViewService.listBeers();
+    public ResponseEntity<List<BeerDTO>> listBeers() {
+        return ResponseEntity.ok(beerViewService.listBeers());
     }
 
     @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
