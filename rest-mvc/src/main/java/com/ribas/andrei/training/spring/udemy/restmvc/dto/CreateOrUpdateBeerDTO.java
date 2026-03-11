@@ -1,5 +1,7 @@
 package com.ribas.andrei.training.spring.udemy.restmvc.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class CreateOrUpdateBeerDTO {
+    @NotBlank
+    @NotNull
     private String name;
     private String style;
     private Integer quantity;

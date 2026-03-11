@@ -38,7 +38,7 @@ class BeerControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testListBeersWhenThereAreNoBeersShouldReturnEmptyList() throws Exception {
+    void testListBeersWhenThereAreNoBeersShouldReturnOKHttpStatusCodeAndEmptyList() throws Exception {
         given(beerViewService.listBeers())
                 .willReturn(Collections.emptyList());
         mockMvc.perform(
@@ -52,7 +52,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testListBeersWhenThereAreBeersShouldReturnListWithValues() throws Exception {
+    void testListBeersWhenThereAreBeersShouldReturnOKHttpStatusCodeAndListWithValues() throws Exception {
         var beers = List.of(createDefaultBeer(UUID.randomUUID()),
                 createDefaultBeer(UUID.randomUUID()));
         given(beerViewService.listBeers())
@@ -69,7 +69,82 @@ class BeerControllerTest {
     }
 
     @Test
-    void testCreateNewBeerShouldWork() throws Exception {
+    void testCreateNewBeerWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name(null)
+                .style("Pilsen")
+                .quantity(48)
+                .upc("7561238480")
+                .price(new BigDecimal("3.5"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(BEER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.createOrUpdateBeerDTO.name\",\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewBeerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("     ")
+                .style("Pilsen")
+                .quantity(48)
+                .upc("7561238480")
+                .price(new BigDecimal("3.5"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(BEER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"     \",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewBeerWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("")
+                .style("Pilsen")
+                .quantity(48)
+                .upc("7561238480")
+                .price(new BigDecimal("3.5"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(BEER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewBeerShouldReturnOKHttpStatusCode() throws Exception {
         var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
                 .name("Jupiler")
                 .style("Pilsen")
@@ -81,10 +156,10 @@ class BeerControllerTest {
         var id = UUID.randomUUID();
         given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
         var mvcResult = mockMvc.perform(
-                    post(BEER_PATH)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                        post(BEER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -96,7 +171,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testUpdateBeerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
+    void testUpdateBeerByIdWhenItDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
                 .name("Maes")
                 .style("Pilsen")
@@ -116,7 +191,79 @@ class BeerControllerTest {
     }
 
     @Test
-    void testUpdateBeerByIdWhenItExistsShouldReturnOK() throws Exception {
+    void testUpdateBeerWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name(null)
+                .style("Pilsen")
+                .quantity(50)
+                .upc("7581004782")
+                .price(new BigDecimal("1.6"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(BEER_PATH_ID, id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
+    }
+
+    @Test
+    void testUpdateBeerWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("")
+                .style("Pilsen")
+                .quantity(50)
+                .upc("7581004782")
+                .price(new BigDecimal("1.6"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(BEER_PATH_ID, id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateBeerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("  ")
+                .style("Pilsen")
+                .quantity(50)
+                .upc("7581004782")
+                .price(new BigDecimal("1.6"))
+                .build();
+
+        var id = UUID.randomUUID();
+        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(BEER_PATH_ID, id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
         var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
                 .name("Maes")
                 .style("Pilsen")
@@ -138,7 +285,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testPatchBeerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
+    void testPatchBeerByIdWhenItDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
                 .name("Maes")
                 .style("Pilsen")
@@ -158,7 +305,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testPatchBeerByIdWhenItExistsShouldReturnOK() throws Exception {
+    void testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
 
         var beerId = UUID.randomUUID();
 
@@ -180,7 +327,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testDeleteBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
+    void testDeleteBeerByIdWhenIdDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         given(beerViewService.deleteBeerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                     delete(BEER_PATH_ID, UUID.randomUUID())
@@ -191,7 +338,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testDeleteBeerByIdExistsShouldDoNothing() throws Exception {
+    void testDeleteBeerByIdExistsShouldReturnNoContentHttpStatusCode() throws Exception {
         var beerId = UUID.randomUUID();
         var beer = createDefaultBeer(beerId);
         given(beerViewService.deleteBeerById(beerId))
@@ -205,7 +352,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testGetBeerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
+    void testGetBeerByIdWhenIdDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         given(beerViewService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                 get(BEER_PATH_WITH_SLASH + UUID.randomUUID())
@@ -216,7 +363,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testGetBeerByIdExistsShouldReturnIt() throws Exception {
+    void testGetBeerByIdExistsShouldReturnOKHttpStatusCodeAndTheObject() throws Exception {
         var beerId = UUID.randomUUID();
         var beer = createDefaultBeer(beerId);
         given(beerViewService.getBeerById(beerId))

@@ -37,7 +37,7 @@ class CustomerControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testListCustomersWhenThereAreNoCustomersShouldReturnEmptyList() throws Exception {
+    void testListCustomersWhenThereAreNoCustomersShouldReturnOKHttpStatusCodeAndEmptyList() throws Exception {
         given(customerViewService.listCustomers())
                 .willReturn(Collections.emptyList());
         mockMvc.perform(
@@ -51,7 +51,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testListCustomersWhenThereAreCustomersShouldReturnList() throws Exception {
+    void testListCustomersWhenThereAreCustomersShouldReturnOKHttpStatusCodeAndListWithValues() throws Exception {
         var customers = List.of(createDefaultCustomer(UUID.randomUUID()),
                 createDefaultCustomer(UUID.randomUUID()));
         given(customerViewService.listCustomers())
@@ -68,7 +68,70 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testCreateNewCustomerShouldWork() throws Exception {
+    void testCreateNewCustomerWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name(null)
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.createCustomer(any(CreateOrUpdateCustomerDTO.class))).willReturn(new CustomerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(CUSTOMER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.createOrUpdateCustomerDTO.name\",\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewCustomerWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("")
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.createCustomer(any(CreateOrUpdateCustomerDTO.class))).willReturn(new CustomerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(CUSTOMER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewCustomerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("  ")
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.createCustomer(any(CreateOrUpdateCustomerDTO.class))).willReturn(new CustomerDTO(id));
+        var mvcResult = mockMvc.perform(
+                        post(CUSTOMER_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateNewCustomerShouldReturnOKOKHttpStatusCode() throws Exception {
         var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("New Customer")
                 .build();
@@ -91,7 +154,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
+    void testUpdateCustomerByIdWhenItDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer")
                 .build();
@@ -107,7 +170,70 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testUpdateCustomerByIdWhenItExistsShouldReturnOK() throws Exception {
+    void testUpdateCustomerByIdWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name(null)
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.of(new CustomerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(CUSTOMER_PATH_ID, UUID.randomUUID())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.createOrUpdateCustomerDTO.name\",\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateCustomerByIdWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("")
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.of(new CustomerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(CUSTOMER_PATH_ID, UUID.randomUUID())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateCustomerByIdWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
+                .name("  ")
+                .build();
+
+        var id = UUID.randomUUID();
+        given(customerViewService.updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class))).willReturn(Optional.of(new CustomerDTO(id)));
+        var mvcResult = mockMvc.perform(
+                        put(CUSTOMER_PATH_ID, UUID.randomUUID())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
+
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateCustomerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
         var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer")
                 .build();
@@ -120,12 +246,13 @@ class CustomerControllerTest {
                     .accept(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(createOrUpdateCustomerDTO))
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andReturn();
         verify(customerViewService, times(1)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
     }
 
     @Test
-    void testPatchCustomerByIdWhenItDoesNotExistShouldReturnNotFound() throws Exception {
+    void testPatchCustomerByIdWhenItDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         var createOrUpdateCustomerDTO = CreateOrUpdateCustomerDTO.builder()
                 .name("Customer2")
                 .build();
@@ -141,7 +268,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testPatchCustomerByIdWhenItExistsShouldReturnOK() throws Exception {
+    void testPatchCustomerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
 
         var customerId = UUID.randomUUID();
 
@@ -161,7 +288,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testDeleteCustomerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
+    void testDeleteCustomerByIdWhenIdDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         given(customerViewService.deleteCustomerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                     delete(CUSTOMER_PATH_ID, UUID.randomUUID())
@@ -172,7 +299,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testDeleteCustomerByIdExistsShouldDoNothing() throws Exception {
+    void testDeleteCustomerByIdExistsShouldReturnNoContentHttpStatusCode() throws Exception {
         var customerId = UUID.randomUUID();
         var customer = createDefaultCustomer(customerId);
         given(customerViewService.deleteCustomerById(customerId))
@@ -186,7 +313,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testGetCustomerByIdWhenIdDoesNotExistShouldReturnNoFoundStatus() throws Exception {
+    void testGetCustomerByIdWhenIdDoesNotExistShouldReturnNotFoundHttpStatusCode() throws Exception {
         given(customerViewService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(
                 get(CUSTOMER_PATH_WITH_SLASH + UUID.randomUUID())
@@ -197,7 +324,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testGetCustomerByIdExistsShouldReturnIt() throws Exception {
+    void testGetCustomerByIdExistsShouldOKHttpStatusCodeAndTheObject() throws Exception {
         var customerId = UUID.randomUUID();
         var customer = createDefaultCustomer(customerId);
         given(customerViewService.getCustomerById(customerId))

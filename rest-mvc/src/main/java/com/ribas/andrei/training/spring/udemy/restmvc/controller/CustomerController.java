@@ -7,6 +7,7 @@ import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundExceptio
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -34,7 +35,7 @@ public class CustomerController {
 
     @PostMapping(CUSTOMER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CreateOrUpdateCustomerDTO customer) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody CreateOrUpdateCustomerDTO customer) {
 
         CustomerDTO savedCustomer = customerViewService.createCustomer(customer);
 
@@ -49,7 +50,7 @@ public class CustomerController {
     }
 
     @PutMapping(CUSTOMER_PATH_ID)
-    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @RequestBody CreateOrUpdateCustomerDTO customer) {
+    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @Validated @RequestBody CreateOrUpdateCustomerDTO customer) {
         customerViewService.updateCustomerById(customerId, customer).orElseThrow(createThrowCustomerNotFoundExceptionSupplier(customerId));
         return ResponseEntity.noContent().build();
     }

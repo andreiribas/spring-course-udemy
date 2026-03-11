@@ -7,6 +7,7 @@ import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -34,7 +35,7 @@ public class BeerController {
 
     @PostMapping(BEER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<BeerDTO> createBeer(@RequestBody CreateOrUpdateBeerDTO beer) {
+    public ResponseEntity<BeerDTO> createBeer(@Validated @RequestBody CreateOrUpdateBeerDTO beer) {
 
         BeerDTO savedBeer = beerViewService.createBeer(beer);
 
@@ -49,7 +50,7 @@ public class BeerController {
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @RequestBody CreateOrUpdateBeerDTO beer) {
+    public ResponseEntity<?> updateBeerById(@PathVariable UUID beerId, @Validated @RequestBody CreateOrUpdateBeerDTO beer) {
         beerViewService.updateBeerById(beerId, beer).orElseThrow(createThrowBeerNotFoundExceptionSupplier(beerId));
         return ResponseEntity.noContent().build();
     }
