@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.ribas.andrei.training-spring</groupId>
             <artifactId>domain</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
