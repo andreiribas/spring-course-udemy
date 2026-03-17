@@ -90,7 +90,7 @@ class BeerControllerTest {
                 .andReturn();
         verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.createOrUpdateBeerDTO.name\",\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull.createOrUpdateBeerDTO.name\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -115,7 +115,7 @@ class BeerControllerTest {
                 .andReturn();
         verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"     \",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"     \",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -140,7 +140,7 @@ class BeerControllerTest {
                 .andReturn();
         verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -234,7 +234,7 @@ class BeerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
         verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -259,7 +259,7 @@ class BeerControllerTest {
                 .andReturn();
         verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateBeerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateBeerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
