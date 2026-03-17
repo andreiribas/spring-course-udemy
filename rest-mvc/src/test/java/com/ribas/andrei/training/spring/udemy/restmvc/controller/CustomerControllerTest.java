@@ -85,7 +85,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull.createOrUpdateCustomerDTO.name\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotNull\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -106,7 +106,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -127,7 +127,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).createCustomer(any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -187,7 +187,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotNull.name\",\"NotNull.java.lang.String\",\"NotNull.createOrUpdateCustomerDTO.name\",\"NotNull\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotNull\",\"defaultMessage\":\"must not be null\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":null,\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotNull\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -208,7 +208,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"\",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -229,7 +229,7 @@ class CustomerControllerTest {
                 .andReturn();
         verify(customerViewService, times(0)).updateCustomerById(any(UUID.class), any(CreateOrUpdateCustomerDTO.class));
 
-        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"field\":\"name\",\"rejectedValue\":\"  \",\"codes\":[\"NotBlank.name\",\"NotBlank.java.lang.String\",\"NotBlank.createOrUpdateCustomerDTO.name\",\"NotBlank\"],\"arguments\":[{\"arguments\":null,\"code\":\"name\",\"codes\":[\"createOrUpdateCustomerDTO.name\",\"name\"],\"defaultMessage\":\"name\"}],\"bindingFailure\":false,\"code\":\"NotBlank\",\"defaultMessage\":\"must not be blank\"}]", mvcResult.getResponse().getContentAsString());
+        assertEquals("[{\"objectName\":\"createOrUpdateCustomerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
