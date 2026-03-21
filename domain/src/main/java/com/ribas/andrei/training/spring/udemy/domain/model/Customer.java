@@ -1,6 +1,8 @@
 package com.ribas.andrei.training.spring.udemy.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -22,6 +24,8 @@ public class Customer {
     @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
 
+    @NotNull
+    @NotBlank
     private String name;
 
     @Version

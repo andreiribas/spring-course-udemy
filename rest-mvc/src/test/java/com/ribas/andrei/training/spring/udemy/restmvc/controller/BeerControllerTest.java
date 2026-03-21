@@ -70,96 +70,144 @@ class BeerControllerTest {
 
     @Test
     void testCreateNewBeerWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name(null)
-                .style("Pilsen")
-                .quantity(48)
-                .upc("7561238480")
-                .price(new BigDecimal("3.5"))
-                .build();
-
-        var id = UUID.randomUUID();
-        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
-        var mvcResult = mockMvc.perform(
-                        post(BEER_PATH)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
-                )
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
-
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotNull\"}]", mvcResult.getResponse().getContentAsString());
-    }
-
-    @Test
-    void testCreateNewBeerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name("     ")
-                .style("Pilsen")
-                .quantity(48)
-                .upc("7561238480")
-                .price(new BigDecimal("3.5"))
-                .build();
-
-        var id = UUID.randomUUID();
-        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
-        var mvcResult = mockMvc.perform(
-                        post(BEER_PATH)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
-                )
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
-
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotNull\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
     }
 
     @Test
     void testCreateNewBeerWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name("")
-                .style("Pilsen")
-                .quantity(48)
-                .upc("7561238480")
-                .price(new BigDecimal("3.5"))
-                .build();
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
 
+    @Test
+    void testCreateNewBeerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenStyleIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotNull\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenStyleIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenStyleIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenQuantityIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"NotNull\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenQuantityIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(-1);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"PositiveOrZero\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenUpcIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotNull\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenUpcIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenUpcIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenPriceIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"NotNull\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenPriceIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal(-1));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenPriceIsZeroShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal(0));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenPriceIsZeroShouldReturnBadRequestHttpStatusCodeV2() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal("0.0"));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    private String testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(CreateOrUpdateBeerDTO createBeerDTO) throws Exception {
         var id = UUID.randomUUID();
-        given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
         var mvcResult = mockMvc.perform(
                         post(BEER_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                                .content(objectMapper.writeValueAsString(createBeerDTO))
                 )
                 .andExpect(status().isBadRequest())
                 .andReturn();
         verify(beerViewService, times(0)).createBeer(any(CreateOrUpdateBeerDTO.class));
-
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
+        return mvcResult.getResponse().getContentAsString();
     }
 
     @Test
     void testCreateNewBeerShouldReturnOKHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name("Jupiler")
-                .style("Pilsen")
-                .quantity(48)
-                .upc("7561238480")
-                .price(new BigDecimal("3.5"))
-                .build();
+        var createBeer = this.createDefaultBeer();
+        testCreateNewBeerShouldReturnOKHttpStatusCodeInternal(createBeer);
+    }
 
+    @Test
+    void testCreateNewBeerShouldReturnOKHttpStatusCodeV2() throws Exception {
+        var createBeer = this.createDefaultBeer();
+        createBeer.setQuantity(0);
+        testCreateNewBeerShouldReturnOKHttpStatusCodeInternal(createBeer);
+    }
+
+    private void testCreateNewBeerShouldReturnOKHttpStatusCodeInternal(CreateOrUpdateBeerDTO createBeer) throws Exception {
         var id = UUID.randomUUID();
         given(beerViewService.createBeer(any(CreateOrUpdateBeerDTO.class))).willReturn(new BeerDTO(id));
         var mvcResult = mockMvc.perform(
                         post(BEER_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                                .content(objectMapper.writeValueAsString(createBeer))
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -192,74 +240,121 @@ class BeerControllerTest {
 
     @Test
     void testUpdateBeerWhenNameIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name(null)
-                .style("Pilsen")
-                .quantity(50)
-                .upc("7581004782")
-                .price(new BigDecimal("1.6"))
-                .build();
-
-        var id = UUID.randomUUID();
-        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
-        var mvcResult = mockMvc.perform(
-                        put(BEER_PATH_ID, id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
-                )
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotNull\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
     }
 
     @Test
     void testUpdateBeerWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name("")
-                .style("Pilsen")
-                .quantity(50)
-                .upc("7581004782")
-                .price(new BigDecimal("1.6"))
-                .build();
-
-        var id = UUID.randomUUID();
-        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
-        var mvcResult = mockMvc.perform(
-                        put(BEER_PATH_ID, id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
-                )
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
     }
 
     @Test
     void testUpdateBeerWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
-        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
-                .name("  ")
-                .style("Pilsen")
-                .quantity(50)
-                .upc("7581004782")
-                .price(new BigDecimal("1.6"))
-                .build();
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
 
+    @Test
+    void testUpdateBeerWhenStyleIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotNull\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenStyleIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenStyleIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenQuantityIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"NotNull\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenQuantityIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(-1);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"PositiveOrZero\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenUpcIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"},{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotNull\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenUpcIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc("");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenUpcIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc("  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NotBlank\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenPriceIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setQuantity(null);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"NotNull\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenPriceIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal(-1));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenPriceIsZeroShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal(0));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testUpdateBeerWhenPriceIsZeroShouldReturnBadRequestHttpStatusCodeV2() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setPrice(new BigDecimal("0.0"));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    private String testUpdateBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(CreateOrUpdateBeerDTO updateBeer) throws Exception {
         var id = UUID.randomUUID();
-        given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
         var mvcResult = mockMvc.perform(
                         put(BEER_PATH_ID, id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                                .content(objectMapper.writeValueAsString(updateBeer))
                 )
                 .andExpect(status().isBadRequest())
                 .andReturn();
         verify(beerViewService, times(0)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
-
-        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NotBlank\"}]", mvcResult.getResponse().getContentAsString());
+        return mvcResult.getResponse().getContentAsString();
     }
 
     @Test
@@ -271,14 +366,29 @@ class BeerControllerTest {
                 .upc("7581004782")
                 .price(new BigDecimal("1.6"))
                 .build();
+        testUpdateBeerByIdShouldReturnNoContentHttpStatusCode(createOrUpdateBeerDTO);
+    }
 
+    @Test
+    void testUpdateBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCodeV2() throws Exception {
+        var createOrUpdateBeerDTO = CreateOrUpdateBeerDTO.builder()
+                .name("Maes")
+                .style("Pilsen")
+                .quantity(0)
+                .upc("7581004782")
+                .price(new BigDecimal("1.6"))
+                .build();
+        testUpdateBeerByIdShouldReturnNoContentHttpStatusCode(createOrUpdateBeerDTO);
+    }
+
+    private void testUpdateBeerByIdShouldReturnNoContentHttpStatusCode(CreateOrUpdateBeerDTO createOrUpdateBeerDTO) throws Exception {
         var id = UUID.randomUUID();
         given(beerViewService.updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(id)));
         mockMvc.perform(
-                    put(BEER_PATH_ID, id)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
+                        put(BEER_PATH_ID, id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createOrUpdateBeerDTO))
                 )
                 .andExpect(status().isNoContent());
         verify(beerViewService, times(1)).updateBeerById(any(UUID.class), any(CreateOrUpdateBeerDTO.class));
@@ -305,22 +415,110 @@ class BeerControllerTest {
     }
 
     @Test
-    void testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
+    void testPatchBeerByIdWhenNameIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("name", "");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
 
+    @Test
+    void testPatchBeerByIdWhenNameIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("name", "  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenStyleIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("style", "");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenStyleIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("style", "  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenQuantityIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("quantity", -1);
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"quantity\",\"code\":\"PositiveOrZero\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenUpcIsEmptyShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("upc", "");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenUpcIsComposedOfSpacesShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("upc", "  ");
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"NullOrNotBlank\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenPriceIsNegativeShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("price", new BigDecimal(-1));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenPriceIsZeroShouldReturnBadRequestHttpStatusCode() throws Exception {
+        Map<String, Object> patchedFields = Map.of("price", new BigDecimal(0));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    @Test
+    void testPatchBeerByIdWhenPriceIsZeroShouldReturnBadRequestHttpStatusCodeV2() throws Exception {
+        Map<String, Object> patchedFields = Map.of("price", new BigDecimal("0.0"));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"price\",\"code\":\"Positive\"}]", testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(patchedFields));
+    }
+
+    private String testPatchBeerByIdWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(Map<String, Object> patchedFields) throws Exception {
         var beerId = UUID.randomUUID();
+        var mvcResult = mockMvc.perform(
+                        patch(BEER_PATH_ID, beerId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(patchedFields))
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        verify(beerViewService, times(0)).patchBeerById(eq(beerId), any(CreateOrUpdateBeerDTO.class));
+        return mvcResult.getResponse().getContentAsString();
+    }
 
+    @Test
+    void testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCode() throws Exception {
         Map<String, Object> beerFields = new HashMap<>();
         var beerName = "Maes";
         var beerStyle = "Pilsen";
         beerFields.put("name", beerName);
         beerFields.put("style", beerStyle);
+        beerFields.put("quantity", 65);
+        testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCodeInternal(beerFields);
+    }
+
+    @Test
+    void testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCodeV2() throws Exception {
+        Map<String, Object> beerFields = new HashMap<>();
+        var beerName = "Maes";
+        var beerStyle = "Pilsen";
+        beerFields.put("name", beerName);
+        beerFields.put("style", beerStyle);
+        beerFields.put("quantity", 0);
+        testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCodeInternal(beerFields);
+    }
+
+    private void testPatchBeerByIdWhenItExistsShouldReturnNoContentHttpStatusCodeInternal(Map<String, Object> patchedFields) throws Exception {
+        var beerId = UUID.randomUUID();
 
         given(beerViewService.patchBeerById(eq(beerId), any(CreateOrUpdateBeerDTO.class))).willReturn(Optional.of(new BeerDTO(beerId)));
         mockMvc.perform(
-                    patch(BEER_PATH_ID, beerId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(beerFields))
+                        patch(BEER_PATH_ID, beerId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(patchedFields))
                 )
                 .andExpect(status().isNoContent());
         verify(beerViewService, times(1)).patchBeerById(eq(beerId), any(CreateOrUpdateBeerDTO.class));
@@ -390,6 +588,16 @@ class BeerControllerTest {
                 .price(new BigDecimal("2.47"))
                 .createdAt(now)
                 .updatedAt(now)
+                .build();
+    }
+
+    private CreateOrUpdateBeerDTO createDefaultBeer() {
+        return CreateOrUpdateBeerDTO.builder()
+                .name("Jupiler")
+                .style("Pilsen")
+                .quantity(48)
+                .upc("7561238480")
+                .price(new BigDecimal("3.5"))
                 .build();
     }
 

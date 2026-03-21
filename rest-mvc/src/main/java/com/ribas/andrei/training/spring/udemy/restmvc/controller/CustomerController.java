@@ -3,6 +3,9 @@ package com.ribas.andrei.training.spring.udemy.restmvc.controller;
 import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.CustomerViewService;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateCustomerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CustomerDTO;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnCreate;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnPatch;
+import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnUpdate;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,7 @@ public class CustomerController {
 
     @PostMapping(CUSTOMER_PATH)
     //@RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody CreateOrUpdateCustomerDTO customer) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Validated(OnCreate.class) @RequestBody CreateOrUpdateCustomerDTO customer) {
 
         CustomerDTO savedCustomer = customerViewService.createCustomer(customer);
 
@@ -50,7 +53,7 @@ public class CustomerController {
     }
 
     @PutMapping(CUSTOMER_PATH_ID)
-    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @Validated @RequestBody CreateOrUpdateCustomerDTO customer) {
+    public ResponseEntity<?> updateCustomerById(@PathVariable UUID customerId, @Validated(OnUpdate.class) @RequestBody CreateOrUpdateCustomerDTO customer) {
         customerViewService.updateCustomerById(customerId, customer).orElseThrow(createThrowCustomerNotFoundExceptionSupplier(customerId));
         return ResponseEntity.noContent().build();
     }
@@ -62,7 +65,7 @@ public class CustomerController {
     }
 
     @PatchMapping(CUSTOMER_PATH_ID)
-    public ResponseEntity<?> patchCustomerById(@PathVariable UUID customerId, @RequestBody CreateOrUpdateCustomerDTO customer) {
+    public ResponseEntity<?> patchCustomerById(@PathVariable UUID customerId, @Validated(OnPatch.class) @RequestBody CreateOrUpdateCustomerDTO customer) {
         customerViewService.patchCustomerById(customerId, customer).orElseThrow(createThrowCustomerNotFoundExceptionSupplier(customerId));
         return ResponseEntity.noContent().build();
     }
