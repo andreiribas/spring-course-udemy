@@ -17,6 +17,8 @@ class CustomerRepositoryTest {
         var customer = customerRepository.save(Customer.builder()
                 .name("Test Customer")
                 .build());
+
+        customerRepository.flush();
         assertNotNull(customer);
         assertNotNull(customer.getId());
     }
