@@ -1,10 +1,7 @@
 package com.ribas.andrei.training.spring.udemy.domain.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -31,22 +28,30 @@ public class Beer {
 
     @NotNull
     @NotBlank
+    @Size(max = 50)
+    @Column(length = 50, nullable = false)
     private String name;
 
     @NotNull
     @NotBlank
+    @Size(max = 50)
+    @Column(length = 50, nullable = false)
     private String style;
 
     @NotNull
     @PositiveOrZero
+    @Column(nullable = false)
     private Integer quantity;
 
     @NotNull
     @NotBlank
+    @Size(max = 255)
+    @Column(length = 255, nullable = false)
     private String upc;
 
     @NotNull
     @Positive
+    @Column(nullable = false)
     private BigDecimal price;
 
     private LocalDateTime createdAt;

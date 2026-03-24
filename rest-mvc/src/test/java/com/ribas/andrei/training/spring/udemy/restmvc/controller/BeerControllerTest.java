@@ -4,6 +4,7 @@ import com.ribas.andrei.training.spring.udemy.restmvc.controller.service.BeerVie
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.CreateOrUpdateBeerDTO;
 import com.ribas.andrei.training.spring.udemy.restmvc.exception.NotFoundException;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.BeerDTO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -90,6 +91,13 @@ class BeerControllerTest {
     }
 
     @Test
+    void testCreateNewBeerWhenNameIsBiggerThan50CharsShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setName(RandomStringUtils.secure().nextAlphanumeric(51));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"name\",\"code\":\"Size\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
     void testCreateNewBeerWhenStyleIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
         var createBeerDTO = this.createDefaultBeer();
         createBeerDTO.setStyle(null);
@@ -108,6 +116,13 @@ class BeerControllerTest {
         var createBeerDTO = this.createDefaultBeer();
         createBeerDTO.setStyle("  ");
         assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"NotBlank\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
+    void testCreateNewBeerWhenStyleHasMoreThan50CharsShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setStyle(RandomStringUtils.secure().nextAlphanumeric(51));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"style\",\"code\":\"Size\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
     }
 
     @Test
@@ -146,6 +161,13 @@ class BeerControllerTest {
     }
 
     @Test
+    void testCreateNewBeerWhenUpcHasMoreThan255CharsShouldReturnBadRequestHttpStatusCode() throws Exception {
+        var createBeerDTO = this.createDefaultBeer();
+        createBeerDTO.setUpc(RandomStringUtils.secure().nextAlphanumeric(256));
+        assertEquals("[{\"objectName\":\"createOrUpdateBeerDTO\",\"fieldName\":\"upc\",\"code\":\"Size\"}]", testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(createBeerDTO));
+    }
+
+    @Test
     void testCreateNewBeerWhenPriceIsNullShouldReturnBadRequestHttpStatusCode() throws Exception {
         var createBeerDTO = this.createDefaultBeer();
         createBeerDTO.setQuantity(null);
@@ -174,7 +196,6 @@ class BeerControllerTest {
     }
 
     private String testCreateNewBeerWhenThereIsAValidationErrorShouldReturnBadRequestHttpStatusCode(CreateOrUpdateBeerDTO createBeerDTO) throws Exception {
-        var id = UUID.randomUUID();
         var mvcResult = mockMvc.perform(
                         post(BEER_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -197,6 +218,13 @@ class BeerControllerTest {
     void testCreateNewBeerShouldReturnOKHttpStatusCodeV2() throws Exception {
         var createBeer = this.createDefaultBeer();
         createBeer.setQuantity(0);
+        testCreateNewBeerShouldReturnOKHttpStatusCodeInternal(createBeer);
+    }
+
+    @Test
+    void testCreateNewBeerShouldReturnOKHttpStatusCodeV3() throws Exception {
+        var createBeer = this.createDefaultBeer();
+        createBeer.setName("name1234567890123456789012345678901234567890123456");
         testCreateNewBeerShouldReturnOKHttpStatusCodeInternal(createBeer);
     }
 

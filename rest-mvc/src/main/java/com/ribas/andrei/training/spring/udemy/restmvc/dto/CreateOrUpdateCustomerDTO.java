@@ -6,6 +6,7 @@ import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnPatch;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Getter
 public class CreateOrUpdateCustomerDTO {
+    @Size(max = 50, groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     @NullOrNotBlank(groups = OnPatch.class)

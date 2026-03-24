@@ -4,10 +4,7 @@ import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.NullOrNotBl
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnCreate;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnPatch;
 import com.ribas.andrei.training.spring.udemy.restmvc.dto.validation.OnUpdate;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -20,11 +17,13 @@ import java.math.BigDecimal;
 @Setter
 public class CreateOrUpdateBeerDTO {
 
+    @Size(max = 50, groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     @NullOrNotBlank(groups = OnPatch.class)
     private String name;
 
+    @Size(max = 50, groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     @NullOrNotBlank(groups = OnPatch.class)
@@ -34,6 +33,7 @@ public class CreateOrUpdateBeerDTO {
     @PositiveOrZero(groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     private Integer quantity;
 
+    @Size(max = 255, groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     @NullOrNotBlank(groups = OnPatch.class)

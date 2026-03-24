@@ -3,6 +3,7 @@ package com.ribas.andrei.training.spring.udemy.domain.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -26,6 +27,8 @@ public class Customer {
 
     @NotNull
     @NotBlank
+    @Size(max = 50)
+    @Column(length = 50, nullable = false)
     private String name;
 
     @Version
